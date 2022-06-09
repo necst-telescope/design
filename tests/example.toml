@@ -1,0 +1,11 @@
+[necst.subpkg1.module1]
+Class1 = { type = "class", node = "/nodename", publish = ["/topic1", "/topic2"], subscribe = ["/topic3"] }
+function_1 = { type = "function", description = "some description about this function" }
+
+[necst.subpkg1.module2]
+Class2 = { type = "class", node = "/nodename", publish = ["/topic2", "/topic3"], subscribe = ["/topic1"] }
+function_2 = { type = "function", description = "some description about this function" }
+
+[necst.subpkg2.module1]
+Class3 = { type = "class", node = "/nodename", publish = ["/topic2"], subscribe = [] }
+function_3 = { type = "function", description = "some description about this function" }
