@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<header>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="./src/css/index.css" />
+    <title>NECST design</title>
+</header>
+
+<body>
+    <div id="root">
+        <div id="data-input">
+            <label>
+                <input id="data-file-url" type="url" placeholder="(Comma-separated) Data file URL(s)">
+                <!-- TODO: remove test url -->
+                <button id="data-file-url-read" type="button">Read</button>
+            </label>
+            <div class="file-drop" id="data-file"><span>Drop data file(s) here</span></div>
+        </div>
+
+        <div id="graph" class="flex">
+            <div id="file-tree"></div>
+            <div id="network-diagram"></div>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Usage of toml.js : https://github.com/ricardobeat/toml.js -->
+    <!-- Doesn't support Array of Object-s for TOML value -->
+    <script src="https://cdn.jsdelivr.net/npm/tomljs@0.1.3/index.min.js"></script>
+
+    <script type="module" src="./src/js/index.js"></script>
+</body>
+
+</html>
