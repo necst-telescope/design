@@ -1,5 +1,7 @@
 "use strict"
 
+import "./typing.js"
+
 
 /**
  * Convert to Map object, if possible.
@@ -76,4 +78,95 @@ function alignMapDepth(map, depth = 1, { _reserveStructure = false } = {}) {
 }
 
 
-export { ensureMapObj, rsplit, alignMapDepth }
+/**
+ * Expand source-target pair, assuming all combinations are possible.
+ * @param {Array.<?>} sources - Array of something's sources.
+ * @param {Array.<?>} targets - Array of something's targets.
+ * @returns {Array.<Combination>} Array of source and target pairs.
+ */
+function getAllCombinations(sources, targets) {
+    if (!targets) { return sources.map(s => ({ source: s, target: null })) }
+    if (!sources) { return targets.map(t => ({ source: null, target: t })) }
+    const combinations = []
+    for (let s of sources) {
+        targets.forEach(t => combinations.push({ source: s, target: t }))
+    }
+    return combinations
+}
+
+
+/**
+ * Get equi-partitioned values, which center positioned at the center of the range.
+ * @param {int} nElems - Number of values to yield.
+ * @param {number} rangeStart - Start of the range.
+ * @param {number} [rangeEnd] - End of the range.
+ * @yields {number} Equi-partitioned value in the range [rangeStart, rangeEnd].
+ */
+function* centeredRange(nElems, rangeStart, rangeEnd) {
+    if (arguments.length < 3) { rangeEnd = rangeStart }
+    const center = (rangeEnd + rangeStart) / 2
+    const diff = rangeEnd - rangeStart
+    for (let i = 0; i < nElems; i++) {
+        yield diff * (2 * i + 1 - nElems) / (2 * nElems /* +shrink */) + center
+    }
+}
+
+
+class SetOps {
+    /**
+     * Compute union of 2 sets.
+     * @param {Set.<?>} a - First Set object.
+     * @param {Set.<?>} b - Second Set object.
+     * @returns {Set.<?>} New set with elements belongs to ``a`` and/or ``b``.
+     */
+    static union(a, b, ...c) {
+        if (arguments.length < 2) { [a, b, ...c] = a }
+        const _union = new Set(a)
+        for (let elem of b) { _union.add(elem) }
+        return (c.length > 0) ? this.union(_union, ...c) : _union
+    }
+
+    /**
+     * Compute difference of 2 sets.
+     * @param {Set.<?>} a - First Set object.
+     * @param {Set.<?>} b - Second Set object.
+     * @returns {Set.<?>} New set with elements belongs to ``a``, but not to ``b``.
+     */
+    static difference(a, b) {
+        const _difference = new Set(a)
+        for (let elem of b) { _difference.delete(elem) }
+        return _difference
+    }
+
+    /**
+     * Compute intersection of 2 sets.
+     * @param {Set.<?>} a - First set.
+     * @param {Set.<?>} b - Second set.
+     * @returns {Set.<?>} New set with elements belongs to both ``a`` and ``b``.
+     */
+    static intersection(a, b) {
+        const _intersection = new Set()
+        for (let elem of b) { if (a.has(elem)) { _intersection.add(elem) } }
+        return _intersection
+    }
+}
+
+
+/**
+ * Extract multiple properties at once.
+ * @param {Object} obj - Object to extract properties.
+ * @param  {...string|Array.<string>} propNames - Property names.
+ * @returns {Array.<?>} Extracted properties.
+ */
+function getProp(obj, ...propNames) { return propNames.flat().map(p => obj[p]) }
+
+
+export {
+    ensureMapObj,
+    rsplit,
+    alignMapDepth,
+    getAllCombinations,
+    centeredRange,
+    SetOps,
+    getProp,
+}
