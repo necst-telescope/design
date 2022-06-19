@@ -5,7 +5,8 @@
  * Set-up pyodide, Python runtime on browser.
  */
 async function setup() {
-    globalThis.pyodide = await loadPyodide()
+    try { globalThis.pyodide = await loadPyodide() }
+    catch (err) { console.debug("Failed to load pyodide.") }
 }
 
 
@@ -23,4 +24,4 @@ async function getPythonModule(url) {
 }
 
 
-export { getPythonModule }
+export { setup, getPythonModule }
