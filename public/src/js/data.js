@@ -43,7 +43,6 @@ async function readTOML(source) {
  */
 function fileStructureToROSNetwork(data) {
     const flatData = utils.alignMapDepth(data.get("necst"), 1)
-    console.log(flatData)
 
     const nodeData = new Map()
     for (let [k, v] of flatData) {
@@ -64,7 +63,7 @@ function fileStructureToROSNetwork(data) {
 /**
  * Get formatted data of ROS network.
  * @param {RawNetworkData} data - ROS network data, parsed from TOML file(s).
- * @returns {ROSPackageData} Formatted and completed ROS network data.
+ * @returns {FormattedNetworkData} Formatted and completed ROS network data.
  */
 function formatData(data) {
     if (!data.nodes && !data.topics) {
