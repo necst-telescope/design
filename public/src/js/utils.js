@@ -19,22 +19,21 @@ function ensureMapObj(obj, { key, sorted } = {}) {
 
 
 /**
- * Flatten nested Object, with its structure is kept as dot-separated key.
- * @param {Object} obj - Object to flatten.
- * @returns {Object} - Object with no nested Object.
+ * Flatten nested Map, with its structure is kept as dot-separated key.
+ * @param {Map.<?, Map|?>} map - Map object to flatten.
+ * @returns {Map.<?, ?>} - Object with no nested Object.
  */
-function flattenObject(obj) {
-    const flatObj = {}
-    for (let key of Object.keys(obj)) {
-        const subObj = obj[key]
-        if ((typeof subObj === "object") && !Array.isArray(subObj) && subObj !== null) {
-            const flattened = flattenObject(subObj)
-            Object.keys(flattened).forEach(k => flatObj[key + "." + k] = flattened[k])
+function flattenMap(map) {
+    const flatMap = new Map()
+    for (let [key, value] of map) {
+        if (value instanceof Map) {
+            const flattened = flattenMap(value)
+            for (let [k, v] of flattened) { flatMap.set(key + "." + k, v) }
         } else {
-            flatObj[key] = obj[key]
+            flatMap.set(key, value)
         }
     }
-    return flatObj
+    return flatMap
 }
 
 
@@ -53,29 +52,28 @@ function rsplit(text, separator, limit) {
 
 
 /**
- * Align the depth of Object nesting.
- * @param {Object} obj - Object to align the depth.
- * @param {number} depth - Max depth of the returned object, should be positive integer.
- * @returns {Object} Object of uniform depth. Shallower structures are kept as is.
+ * Align the depth of Map object nesting.
+ * @param {Map.<string|?, Map|?>} map - Map to align the depth.
+ * @param {number} depth - Max depth of the returned Map, should be positive integer.
+ * @returns {Map.<string, ?>} Map of uniform depth. Shallower structures are kept as is.
  */
-function alignObjectDepth(obj, depth = 1, { _reserveStructure = false } = {}) {
-    if (depth < 1) { return obj }
-    console.log(obj)
+function alignMapDepth(map, depth = 1, { _reserveStructure = false } = {}) {
+    if (depth < 1) { return map }
 
-    if (!_reserveStructure) { obj = flattenObject(obj) }
-    const groupedObj = {}
-    for (let key of Object.keys(obj)) {
+    if (!_reserveStructure) { map = flattenMap(map) }
+    const groupedMap = new Map()
+    for (let [key, value] of map) {
         const [newKey, newPropName] = rsplit(key, ".", 1)
         if (newKey === "") {
-            groupedObj[key] = obj[key]
+            groupedMap.set(key, value)
         } else {
-            if (!groupedObj[newKey]) { groupedObj[newKey] = {} }
-            groupedObj[newKey][newPropName] = obj[key]
+            if (!groupedMap.get(newKey)) { groupedMap.set(newKey, new Map()) }
+            groupedMap.get(newKey).set(newPropName, value)
         }
     }
 
-    return alignObjectDepth(groupedObj, depth - 1, { _reserveStructure: true })
+    return alignMapDepth(groupedMap, depth - 1, { _reserveStructure: true })
 }
 
 
-export { ensureMapObj, rsplit, alignObjectDepth }
+export { ensureMapObj, rsplit, alignMapDepth }
