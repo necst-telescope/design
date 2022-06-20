@@ -161,6 +161,31 @@ class SetOps {
 function getProp(obj, ...propNames) { return propNames.flat().map(p => obj[p]) }
 
 
+/**
+ * Validate the characters used in HTML element ID.
+ * @param {string} id HTML element ID to validate.
+ * @returns {string} ID consists of valid characters; alphanumeric + "_-:."
+ */
+function validateId(id) { return id.replace(/[^a-zA-Z0-9.:_-]/g, ".") }
+
+
+class MathOps {
+    /**
+     * Sums the numbers in an Array.
+     * @param {Array.<number>} arr - Array of numbers.
+     * @returns {number} Sum of the ``arr``.
+     */
+    static sum(arr) { return arr.reduce((a, b) => a + b, 0) }
+
+    /**
+     * Get mean value of numbers in an Array.
+     * @param {Array.<number>} arr - Array of numbers.
+     * @returns {number} Mean value of numbers in ``arr``.
+     */
+    static mean(arr) { return (this.sum(arr) / arr.length) || 0 }
+}
+
+
 export {
     ensureMapObj,
     rsplit,
@@ -169,4 +194,6 @@ export {
     centeredRange,
     SetOps,
     getProp,
+    validateId,
+    MathOps,
 }
