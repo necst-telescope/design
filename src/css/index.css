@@ -5,7 +5,7 @@ body {
   padding: 0;
 }
 
-.file-drop, .flex {
+div #network-diagram, .file-drop, .flex {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -16,7 +16,7 @@ body {
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  height: min(75px, 30vh);
   border: dashed 5px #DDD;
   color: #888;
 }
@@ -28,7 +28,6 @@ body {
 div#data-input {
   margin: 10px;
   width: min(300px, 100vw);
-  height: min(100px, 100vh);
 }
 div#data-input input {
   border: solid 1px #888;
@@ -47,4 +46,13 @@ div#data-input button:focus {
 }
 div#data-input * {
   margin: 0 0 5px 0;
+}
+
+div #network-diagram {
+  flex-direction: column;
+  justify-content: center;
+  width: min(100%, 800px);
+  height: min(100%, 500px);
+  border: solid 1px #888;
+  color: #888;
 }

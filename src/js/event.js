@@ -5,7 +5,7 @@ import * as graph from "./graph.js"
 
 
 async function dropHandler(event) {
-    event.preventDefault()  // Default is to open the file in current window.
+    event.preventDefault()  // Default is to open the file in another tab.
 
     d3.select(this)
         .classed("drag-over", false)
@@ -30,7 +30,7 @@ async function dropHandler(event) {
     console.info(`Read ${files.length} file${files.length === 1 ? "" : "s"}`)
 
     const networkData = await data.readTOML(files)
-    new graph.NetworkGraph(networkData).focusOn()
+    new graph.NetworkDiagram(networkData).draw()
 }
 
 
@@ -49,7 +49,7 @@ async function clickHandler(event) {
 
     const url = d3.select("#data-file-url").property("value")
     const networkData = await data.readTOML(url)
-    new graph.NetworkGraph(networkData).focusOn()
+    new graph.NetworkDiagram(networkData).draw()
 }
 
 

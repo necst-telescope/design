@@ -16,6 +16,8 @@ async function main() {
 
     const previousStructureTOML = [
         "https://raw.githubusercontent.com/necst-telescope/design/main/public/tests/example.toml",  // TODO: Replace with valid one.
+        // "https://raw.githubusercontent.com/necst-telescope/design/main/public/assets/necst-v2.toml",
+        // "https://raw.githubusercontent.com/necst-telescope/design/main/public/assets/necst-v3.toml",
     ]
     d3.select("#data-file-url")
         .property("value", previousStructureTOML.join(","))
