@@ -211,7 +211,7 @@ analysis = {type="function", description="Read 9pt method result Numpy file & TR
 
 [necst.lib.get_xffts_data]
 _ = {launched=[], requiredBy=[], standalone=false}
-get_xffts_data = {type="class", description="Receive 1 topic containing data from 20 XFFTS boards", subscribe=["/XFFTS_SPEC"]}
+get_xffts_data = {type="class", description="Receive 1 topic containing data from 20 XFFTS boards", name="(undefined)", subscribe=["/XFFTS_SPEC"]}
 "get_xffts_data.getdata" = {type="method", description="Get received spectral data"}
 "get_xffts_data.get_integdata" = {type="method", description="Get spectral data, integrated for specified (0.1 * n) time duration"}
 
@@ -316,7 +316,28 @@ read = {type="function", description="Read observation spec file"}
 
 [necst.lib.topic_status]
 _ = {launched=[], requiredBy=[], standalone=false}
-deco = {type="function", description="Publish node status, by executing arbitrary wrapped function", publish=["/status_topic"]}
+deco = {type="function", description="Publish node status, by executing arbitrary wrapped function", name="(any)", publish=["/status_topic"]}
+
+[necst.logger.scripts.ROS_save_hosei_to_db]
+_ = {launched=[], requiredBy=[], standalone=true}
+save_to_DB = {type="function", description="Make a table on N2Lite to save pointing error parameters"}
+save = {type="function", description="Save pointing error parameters to N2Lite", name="/ROS_save_hosei_to_db", subscribe=["/hosei_publish"]}
+
+[necst.logger.scripts.ROS_save_log_db]
+_ = {launched=[], requiredBy=[], standalone=true}
+save = {type="function", description="Save log data to N2Lite"}
+save_obs_status = {type="function", description="Save observation status to N2Lite", name="/save_log_db", subscribe=["/logging_ctrl", "/obs_status"]}
+
+[necst.logger.scripts.ROS_save_weather_db]
+_ = {launched=[], requiredBy=[], standalone=true}
+log_weather = {type="class", description="Save weather data to N2Lite", name="/weather_log", subscribe=["/status_weather"]}
+"log_weather.logging" = {type="method", description="Write weather data to N2Lite"}
+
+[necst.logger.scripts.obs_log_server]
+_ = {launched=[], requiredBy=[], standalone=true, description="Web server for observation log, binds N2Lite to lab wiki"}
+
+[necst.logger.scripts.weather_server]
+_ = {launched=[], requiredBy=[], standalone=true, description="Web server for weather log???"}
 
 ################################################################################
 
