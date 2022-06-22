@@ -166,7 +166,7 @@ function getProp(obj, ...propNames) { return propNames.flat().map(p => obj[p]) }
  * @param {string} id HTML element ID to validate.
  * @returns {string} ID consists of valid characters; alphanumeric + "_-:."
  */
-function validateId(id) { return id.replace(/[^a-zA-Z0-9.:_-]/g, ".") }
+function validateId(id) { return id.replace(/[^a-zA-Z0-9.:_-]/g, "_") }
 
 
 class MathOps {
