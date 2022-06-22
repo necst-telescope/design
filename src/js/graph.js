@@ -1,5 +1,7 @@
 "use strict"
 
+import * as event from "./event.js"
+import * as svg from "./svg.js"
 import "./typing.js"
 import * as utils from "./utils.js"
 
@@ -164,21 +166,27 @@ class NetworkDiagram extends NetworkGraph {
 
         this.unknown = { x: 52, y: 52 }
 
-        const margin = { top: 15, bottom: 15, left: 15, right: 15 }
+        // const margin = { top: 15, bottom: 15, left: 15, right: 15 }
+        const margin = { top: 0, bottom: 0, left: 0, right: 0 }
         const size = { width: 1000, height: 500 }
         this.x = d3.scaleLinear()
             .domain([0, 100])
             .range([margin.left, size.width - margin.right])
+            .clamp(false)
         this.y = d3.scaleLinear()
             .domain([0, 100])
             .range([margin.top, size.height - margin.bottom])
+            .clamp(false)
 
         d3.selectAll("#network-diagram > *").remove()
-        this.canvas = d3.select("#network-diagram")
-            .append("svg")
-            .attr("viewBox", `0 0 ${size.width} ${size.height}`)
-            .append("g")
+        const _svg = d3.select("#network-diagram")
+            .append("svg:svg")
+        _svg.append("svg:defs")
+            .append(() => svg.arrow().node())
+        this.canvas = _svg.attr("viewBox", `0 0 ${size.width} ${size.height}`)
+            .append("svg:g")
             .attr("transform", `translate(${margin.left}, ${margin.top})`)
+            .attr("id", "canvas")
 
         this.canvas = this.canvas
         // XXX: Avoid `this` reference error, not accessible from outside the
@@ -196,9 +204,11 @@ class NetworkDiagram extends NetworkGraph {
             .append("g")
             .classed("ros-topic", true)
             .attr("id", d => utils.validateId(`ros-topic-${d[0]}`))
+            .on("mousedown", ev => event.clickOrDragHandler(ev, this))
         topics.append("line")
             .classed("ros-topic-line", true)
             .attr("stroke", "#AAA")
+            .attr("marker-end", "url(#arrow)")
         topics.append("text")
             .classed("ros-topic-label", true)
             .text(d => d[1].name)
@@ -209,11 +219,13 @@ class NetworkDiagram extends NetworkGraph {
             .append("g")
             .classed("ros-node", true)
             .attr("id", d => utils.validateId(`ros-node-${d[1].name}`))
+            .on("mousedown", ev => event.clickOrDragHandler(ev, this))
         nodes.append("rect")
             .classed("ros-node-bg", true)
             .attr("width", d => d[1].name.length * 10)
             .attr("height", 20)
-            .style("fill", "#AFF")
+            .attr("transform", "translate(0, -15)")
+            .style("fill", "#AFF9")
         nodes.append("text")
             .classed("ros-node-label", true)
             .style("fill", "#00F")
@@ -232,30 +244,22 @@ class NetworkDiagram extends NetworkGraph {
         return this[axis](coord)
     }
 
-    draw(name) {
-        this.focusOn(name)
+    draw({ name, animate } = {}) {
+        if (name) { this.focusOn(name) }  // Fix coordinate only when name is provided.
 
-        this.topics.selectAll("line")
-            .transition()
+        const lines = this.topics.selectAll("line")
+        const texts = this.topics.selectAll("text")
+        animate ? lines.transition() : lines
             .attr("x1", d => this.#getCoord("x", d[1].source))
             .attr("x2", d => this.#getCoord("x", d[1].target))
             .attr("y1", d => this.#getCoord("y", d[1].source))
             .attr("y2", d => this.#getCoord("y", d[1].target))
-        this.topics.selectAll("text")
-            .transition()
+        animate ? texts.transition() : texts
             .attr("x", d => this.#getCoord("x", d[1].source, d[1].target))
             .attr("y", d => this.#getCoord("y", d[1].source, d[1].target))
 
-        this.nodes.selectAll("rect")
-            .transition()
-            .attr("x", d => this.x(d[1].x))
-            .attr("y", d => this.y(d[1].y) - 15)
-        this.nodes.selectAll("text")
-            .transition()
-            .attr("x", d => this.x(d[1].x))
-            .attr("y", d => this.y(d[1].y))
-
-        // TODO: Add `drag` handler (translates the element) and `click` handler (center the clicked element).
+        animate ? this.nodes.transition() : this.nodes
+            .attr("transform", d => `translate(${this.#getCoord("x", d[0])}, ${this.#getCoord("y", d[0])})`)
     }
 }
 
