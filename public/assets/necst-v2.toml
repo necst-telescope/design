@@ -1,0 +1,333 @@
+[necst.lib.device.abs_device]
+_ = {launched=[], requiredBy=[], standalone=false}
+get_position = {type="function", description="Get HOT position using DIO"}
+move = {type="function", description="HOT motor DIO control"}
+
+[necst.lib.device.antenna_device]
+_ = {launched=[], requiredBy=[], standalone=false}
+AntennaDriver = {type="class", description="Antenna servo motor DIO control"}
+"AntennaDriver.command" = {type="method", description="Convert value to binary-command & DIO control"}
+antenna_device = {type="class", description="PID controller"}
+"antenna_device.init_speed" = {type="method", description="Stop telescope drive"}
+"antenna_device.set_pid_param" = {type="method", description="Set PID parameter"}
+"antenna_device.move_azel" = {type="method", description="Call DIO controller & return PID-related parameters"}
+"antenna_device.emergency_stop" = {type="method", description="Stop telescope drive immediately"}
+calc_pid = {type="function", description="PID formula"}
+
+[necst.lib.device.antenna_device_reverse]
+_ = {launched=[], requiredBy=[], standalone=false}
+antenna_device = {type="class", description="PID control & antenna servo motor DIO control"}
+"antenna_device.init_speed" = {type="method", description="Stop telescope drive via DIO"}
+"antenna_device.move_azel" = {type="method", description="DIO control & return PID-related parameters"}
+"antenna_device.emergency_stop" = {type="method", description="Stop telescope drive immediately"}
+calc_pid = {type="function", description="PID formula"}
+
+[necst.lib.device.dome_device]
+_ = {launched=[], requiredBy=[], standalone=false}
+dome_device = {type="class", description="Dome DIO control"}
+"dome_device.move_track" = {type="method", description="Call dome_device.move"}
+"dome_device.move" = {type="method", description="Select drive mode & drive via dome_device.do_output"}
+"dome_device.dome_stop" = {type="method", description="Stop dome drive by DIO control"}
+"dome_device.dome_open" = {type="method", description="Open dome by DIO control"}
+"dome_device.dome_close" = {type="method", description="Close dome by DIO control"}
+"dome_device.memb_open" = {type="method", description="Open membrane by DIO control"}
+"dome_device.memb_close" = {type="method", description="Close membrane by DIO control"}
+"dome_device.dome_fan" = {type="method", description="Turn on/off dome fan by DIO control"}
+"dome_device.do_output" = {type="method", description="Translate to command & DIO control"}
+"dome_device.get_action" = {type="method", description="Get if dome is driving or not by DIO"}
+"dome_device.get_door_status" = {type="method", description="Get if dome is open & driving by DIO"}
+"dome_device.get_memb_status" = {type="method", description="Get if membrane is open & driving by DIO"}
+"dome_device.get_remote_status" = {type="method", description="Get if dome control is at remote or local by DIO"}
+"dome_device.error_check" = {type="method", description="Get error message, if any, by DIO"}
+"dome_device.print_msg" = {type="method", description="Print a message"}
+"dome_device.print_error" = {type="method", description="Print an error message"}
+
+[necst.lib.device.drive_device]
+_ = {launched=[], requiredBy=[], standalone=false}
+move_drive = {type="function", description="DIO ???"}
+move_contactor = {type="function", description="DIO ???"}
+
+[necst.lib.device.m2_device]
+_ = {launched=[], requiredBy=[], standalone=false}
+Strobe = {type="function", description="DIO ???"}
+StrobeHOff = {type="function", description="DIO ???"}
+InitIndexFF = {type="function", description="DIO ???"}
+um_to_puls = {type="function", description="Convert destination(dist) [um] to pulse rate"}
+MoveIndexFF = {type="function", description="DIO ???"}
+get_pos = {type="function", description="Get current M2 position and upper/lower limits of position by DIO???"}
+
+[necst.lib.device.m4_device]
+_ = {launched=[], requiredBy=[], standalone=false}
+get_pos = {type="function", description="Get if M4 position & driving status by DIO"}
+move = {type="function", description="Move M4 by DIO"}
+counter_reset = {type="function", description="DIO ???"}
+stop = {type="function", description="DIO ???"}
+
+[necst.lib.XFFTS_n2fits_write]
+_ = {launched=[], requiredBy=[], standalone=false}
+write = {type="function", description="Write observation data as FITS table"}
+
+[necst.lib.ac240]
+_ = {launched=[], requiredBy=["necst.lib.achilles"], standalone=false}
+ac240 = {type="class", description="AC240 controller"}
+"ac240.getspectrum" = {type="method", description="Get spectral data by socket communication, NOT RETURN IT"}
+"ac240.getstatus" = {type="method", description="Get status of ??? by socket communication"}
+"ac240.getdata" = {type="method", description="Return stored spectral data"}
+"ac240.gettemperature" = {type="method", description="Get temperature"}
+"ac240.calibration" = {type="method", description="Run??? spectrometer calibration"}
+"ac240.initialize" = {type="method", description="Initialize spectrometer"}
+"ac240.finalize" = {type="method", description="Finalize spectrometer"}
+"ac240.setfpgawindowfunc" = {type="method", description="Set FPGA window function"}
+"ac240.setadfullscale" = {type="method", description="???"}
+"ac240.setadoffset" = {type="method", description="???"}
+"ac240.setadcoupling" = {type="method", description="???"}
+"ac240.setadbandwidth" = {type="method", description="???"}
+cancel = {type="function", description="Send OPERATION_CANCEL command to spectrometer"}
+
+[necst.lib.achilles]
+_ = {launched=[], requiredBy=[], standalone=false}
+thread = {type="class", description="Wrap methods of threading.Thread"}
+"thread.run" = {type="method", description="Call thread target function & store the return value"}
+"thread.get" = {type="method", description="Get return value of thread target function"}
+tmap = {type="function", description="Run multiple functions with threading"}
+dfs = {type="class", description="Wrap 2 necst.lib.ac240.ac240 controllers"}
+"dfs.oneshot_dfs01" = {type="method", description="Get spectral data with 1st AC240 board"}
+"dfs.oneshot_dfs02" = {type="method", description="Get spectral data with 2nd AC240 board"}
+"dfs.oneshot" = {type="method", description="Get spectral data with both 2 AC240 boards"}
+
+[necst.lib.azel_calc]
+_ = {launched=[], requiredBy=[], standalone=false}
+azel_calc = {type="class", description="Calculate horizontal coordinate from other CoordSys"}
+"azel_calc.dcos_calc" = {type="method", description="Apply cosalt factor"}
+"azel_calc.kisa_calc" = {type="method", description="Apply pointing error correction, via necst.lib.coord.apply_kisa_test"}
+"azel_calc.azel_calc" = {type="method", description="Get 10Hz AzEl lists, all same position"}
+"azel_calc.coordinate_calc" = {type="method", description="Get 10Hz AzEl lists, all same (celestial) position?, converted from other CoordSys"}
+
+[necst.lib.azel_to_radec]
+_ = {launched=[], requiredBy=[], standalone=false}
+fk5_from_altaz = {type="function", description="Convert coordinate in AzEl to FK5"}
+
+[necst.lib.beam_calc]
+_ = {launched=[], requiredBy=[], standalone=false}
+beam_calc = {type="class", description="Calculate beam squint rotation"}
+"beam_calc.calc_model" = {type="method", description="Get offset from given parameters"}
+"beam_calc.calc" = {type="method", description="Get offset using hard-coded parameters"}
+"beam_calc.calc_list" = {type="method", description="Get offset for multiple AzEl, using hard-coded parameters"}
+
+[necst.lib.calc_coord]
+_ = {launched=[], requiredBy=[], standalone=false}
+azel_calc = {type="class", description="Calculate arbitrary # of horizontal coordinates from other CoordSys"}
+"azel_calc.kisa_calc" = {type="method", description="Apply pointing error correction for SkyCoord, via necst.lib.coord.apply_kisa_test"}
+"azel_calc.kisa_calc2" = {type="method", description="Apply pointing error correction for np.array, via necst.lib.coord.apply_kisa_test"}
+"azel_calc.coordinate_calc" = {type="method", description="Get arbitrary # & time of AzEl lists, converted from other CoordSys"}
+
+[necst.lib.calc_offset]
+_ = {launched=[], requiredBy=[], standalone=false}
+calc_offset = {type="function", description="Calculate coordinate offset"}
+
+[necst.lib.ccd]
+_ = {launched=[], requiredBy=[], standalone=false}
+ccd_controller = {type="class", description="Save metadata & analyse image of optical pointing"}
+"ccd_controller.save_status" = {type="method", description="Save metadata of 'read_status' topic"}
+"ccd_controller.save_track_status" = {type="method", description="Save metadata of 'read_status' topic, identical to ccd_controller.save_status"}
+"ccd_controller.ccd_analysis" = {type="method", description="Find pixel of photographed star from image file"}
+
+[necst.lib.coord]
+_ = {launched=[], requiredBy=["necst.lib.azel_calc", "necst.lib.calc_coord"], standalone=false}
+coord_calc = {type="class", description="Calculate pointing error correction value"}
+"coord_calc.apply_kisa" = {type="method", description="Calculate pointing error dAz, dEl"}
+"coord_calc.apply_kisa_test" = {type="method", description="Calculate pointing error dAz, dEl, using different phase for omega2 & separate [omega, omega2, chi, chi2] for AzEl"}
+"coord_calc.read_kisa_file" = {type="method", description="Read pointing params file"}
+
+[necst.lib.correct_fits]
+_ = {launched=[], requiredBy=[], standalone=true}
+calc = {type="function", description="Fix velocity value recorded assuming old spectrometer???"}
+
+[necst.lib.dfs_client]
+_ = {launched=[], requiredBy=["necst.lib.ac240"], standalone=false}
+Client = {type="class", description="???"}
+"Client.print_client_config" = {type="method", description="Print socket connection address"}
+"Client.open" = {type="method", description="Open socket connection"}
+"Client.close" = {type="method", description="Close socket connection"}
+"Client.cancel" = {type="method", description="Send OPERATION_CANCEL command to spectrometer"}
+"Client.db_print_log" = {type="method", description="Print non-existent SQL DB log"}
+"Client.db_print_monitor" = {type="method", description="Print non-existent SQL DB monitor???"}
+ClientSocketIO = {type="class", description="Wrap socket connection"}
+"ClientSocketIO.connect" = {type="method", description="Open socket connection"}
+"ClientSocketIO.close" = {type="method", description="Close socket connection"}
+"ClientSocketIO.write" = {type="method", description="Write a command to connection file"}
+"ClientSocketIO.read_reply_line" = {type="method", description="Read 1 line of response from connection file"}
+"ClientSocketIO.read_reply_bin" = {type="method", description="Read specified length response from connection file"}
+MySQLClient = {type="class", description="Wrap MySQL DB connection, which import is commented out"}
+"MySQLClient.execute" = {type="method", description="Execute SQL command"}
+"MySQLClient.get" = {type="method", description="Get SQL table content"}
+"MySQLClient.print_table" = {type="method", description="Print pretified SQL table content"}
+
+[necst.lib.dfs_table]
+_ = {launched=[], requiredBy=["necst.lib.ac240", "necst.lib.dfs_client"], standalone=false}
+
+[necst.lib.dome_pos]
+_ = {launched=[], requiredBy=[], standalone=false}
+dome_pos_controller = {type="class", description="Get | init dome encoder readings"}
+"dome_pos_controller.dome_enc_initialize" = {type="method", description="Reset & init DIO connection to dome encoder"}
+"dome_pos_controller.print_msg" = {type="method", description="Print a message"}
+"dome_pos_controller.print_error" = {type="method", description="Print an error message"}
+"dome_pos_controller.dome_encoder_acq" = {type="method", description="Get dome encoder reading (from encoder pulse count)"}
+"dome_pos_controller.dome_set_counter" = {type="method", description="Set dome encoder position by giving pulse count corresponding to current position"}
+"dome_pos_controller.read_dome_enc" = {type="method", description="Get dome encoder reading, without updating the value"}
+dome_pos_client = {type="function", description="Return a dome_pos_controller bound which methods are bound to socket connection"}
+dome_pos_monito_client = {type="function", description="Return a dome_pos_controller bound which read_* methods are bound to socket connection"}
+start_dome_pos_server = {type="function", description="Create & start a dome position getter server???"}
+
+[necst.lib.doppler_nanten]
+_ = {launched=[], requiredBy=[], standalone=false}
+doppler_nanten = {type="class", description="Calculate 2nd LO freq to track Doppler shift"}
+"doppler_nanten.set_track" = {type="method", description="Get Doppler shift (velocity, frequency) & 2nd LO frequency to track RESTFREQ"}
+"doppler_nanten.t_set_track" = {type="method", description="Print 'aaa=8.03 bbb=13.'"}
+"doppler_nanten.set_track_old" = {type="method", description="Get Doppler shift (velocity, frequency) & 2nd LO frequency to track RESTFREQ"}
+"doppler_nanten.get_vobs" = {type="method", description="Get relative LoS velocity of observer to VLSR with CoordSys conversion"}
+"doppler_nanten.calc_vobs" = {type="method", description="Calculate Vobs from FK5 coordinate"}
+"doppler_nanten.nutation" = {type="method", description="Calculate nutation from equatorial coordinate"}
+
+[necst.lib.get_result_pointing]
+_ = {launched=[], requiredBy=[], standalone=true}
+f = {type="function", description="Quadratic polynomial for fitting"}
+gaussian = {type="function", description="Gaussian function for fitting"}
+analyse = {type="function", description="Read 9pt method result FITS file & derive offset, HPBW, AzEl of scan center, etc."}
+
+[necst.lib.get_result_pointing_xffts_edge]
+_ = {launched=[], requiredBy=[], standalone=true}
+f = {type="function", description="Quadratic polynomial for fitting"}
+gaussian = {type="function", description="Gaussian function for fitting"}
+calc_integdata = {type="function", description="Calibrate & integrate X/Y scan data"}
+analysis = {type="function", description="Read 9pt method result Numpy file & TRY TO derive offset, AzEl of scan center, with inaccurate differentiation."}
+
+[necst.lib.get_result_pointing_xffts_line]
+_ = {launched=[], requiredBy=[], standalone=true}
+f = {type="function", description="Quadratic polynomial for fitting"}
+gaussian = {type="function", description="Gaussian function for fitting"}
+calc_integdata = {type="function", description="Calibrate & integrate X/Y scan data"}
+analysis = {type="function", description="Read 9pt method result Numpy file & TRY TO derive offset, AzEl of scan center, with inaccurate differentiation."}
+
+[necst.lib.get_xffts_data]
+_ = {launched=[], requiredBy=[], standalone=false}
+get_xffts_data = {type="class", description="Receive 1 topic containing data from 20 XFFTS boards", subscribe=["/XFFTS_SPEC"]}
+"get_xffts_data.getdata" = {type="method", description="Get received spectral data"}
+"get_xffts_data.get_integdata" = {type="method", description="Get spectral data, integrated for specified (0.1 * n) time duration"}
+
+[necst.lib.hosei_fit]
+_ = {launched=[], requiredBy=[], standalone=false}
+hosei_point = {type="function", description="Fit optical pointing data & plot them, return nothing"}
+
+[necst.lib.hosei_fit_radio]
+_ = {launched=[], requiredBy=[], standalone=true, description="TRY TO do something, return nothing"}
+
+[necst.lib.kisa_rev]
+_ = {launched=[], requiredBy=["necst.lib.azel_to_radec"], standalone=false}
+apply_kisa_test = {type="function", description="Calculate pointing error dAz, dEl, using different phase for omega2 & separate [omega, omega2, chi, chi2] for AzEl"}
+read_kisa_file = {type="function", description="Read pointing params file"}
+
+[necst.lib.log_weather]
+_ = {launched=[], requiredBy=[], standalone=false}
+Weather_log = {type="class", description="Log weather data to CSV file"}
+"Weather_log.initialize" = {type="method", description="Write CSV header"}
+"Weather_log.write" = {type="method", description="Write weather data to CSV file"}
+"Weather_log.read" = {type="method", description="Read the CSV file"}
+
+[necst.lib.logger]
+_ = {launched=[], requiredBy=[], standalone=false}
+logger = {type="class", description="Console logger"}
+"logger.setup_logger" = {type="method", description="Configure log format & destination"}
+"logger.obslog" = {type="method", description="Log minimal observation data to file"}
+
+[necst.lib.n2df]
+_ = {launched=[], requiredBy=["necst.lib.get_result_pointing_xffts_edge", "necst.lib.get_result_pointing_xffts_line", "necst.lib.pointing_edge_xffts", "necst.lib.pointing_line_xffts"], standalone=false}
+File = {type="class", description="File handler specialized in handling 16IF spectrometer data"}
+"File.write" = {type="method", description="Write data to file"}
+"File.open" = {type="method", description="Open file"}
+"File.close" = {type="method", description="Close file"}
+Read = {type="class", description="Read data from file"}
+"Read.read_timestamp" = {type="method", description="Read timestamp"}
+"Read.read_obs_mode" = {type="method", description="Read observation mode"}
+"Read.read_scan_num" = {type="method", description="Read scan index"}
+"Read.read_lamdel" = {type="method", description="Read lamdel"}
+"Read.read_betdel" = {type="method", description="Read betdel"}
+"Read.read_onearray" = {type="method", description="Read single spectral data"}
+"Read.read_for_otf" = {type="method", description="Read time series data"}
+"Read.read_all" = {type="method", description="Read all data"}
+
+[necst.lib.n2fits_write]
+_ = {launched=[], requiredBy=[], standalone=false}
+write = {type="function", description="Write observation data as FITS table"}
+
+[necst.lib.opt_analy]
+_ = {launched=[], requiredBy=["necst.lib.plot"], standalone=true}
+process2forfit = {type="function", description="Format process.log data & save to for_fit.log"}
+process_static = {type="function", description="Calculate statistics [mean, std, median] of process.log data"}
+opt_plot = {type="function", description="Plot Az-dx, El-dy, Az-dy, El-dx"}
+fdx = {type="function", description="Fitting function, major terms of pointing model?"}
+fdy = {type="function", description="Fitting function, major terms of pointing model?, but NOT consistent trigonometric function"}
+opt_fit = {type="function", description="Fit [dAz, de, chi_x, omega_x, eps, chi_y, omega_y, g1, dEl], WHILE g1 is multiplied with El, not cos(El)"}
+
+[necst.lib.plot]
+_ = {launched=[], requiredBy=["necst.lib.hosei_fit"], standalone=false}
+plot = {type="function", description="Plot Az-dx, El-dy, Az-dy, El-dx"}
+
+[necst.lib.plot_3d]
+_ = {launched=[], requiredBy=["necst.lib.hosei_fit"], standalone=false}
+plot = {type="function", description="Plot dx, dy on AzEl plane"}
+
+[necst.lib.pointing_edge_xffts]
+_ = {launched=[], requiredBy=[], standalone=true}
+gaussian = {type="function", description="Gaussian function for fitting"}
+calc_integdata = {type="function", description="Calibrate & integrate X/Y scan data"}
+analysis = {type="function", description="Read edge observation Numpy file & plot Ta, dTa/dx|y, with inaccurate differentiation"}
+
+[necst.lib.pointing_line]
+_ = {launched=[], requiredBy=[], standalone=true}
+f = {type="function", description="Quadratic polynomial for fitting"}
+gaussian = {type="function", description="Gaussian function for fitting"}
+analysis = {type="function", description="Read 9pt method result FITS file & plot Ta"}
+
+[necst.lib.pointing_line_xffts]
+_ = {launched=[], requiredBy=[], standalone=true}
+f = {type="function", description="Quadratic polynomial for fitting"}
+gaussian = {type="function", description="Gaussian function for fitting"}
+calc_integdata = {type="function", description="Calibrate & integrate X/Y scan data"}
+analysis = {type="function", description="Read ??? result Numpy file & plot Ta???"}
+
+[necst.lib.pointing_moon_edge]
+_ = {launched=[], requiredBy=[], standalone=true}
+gaussian = {type="function", description="Gaussian function for fitting"}
+analysis = {type="function", description="Read edge observation result FITS file & plot Ta, dTa/dx|y, with inaccurate differentiation"}
+
+[necst.lib.pointing_planet]
+_ = {launched=[], requiredBy=[], standalone=true}
+gaussian = {type="function", description="Gaussian function for fitting"}
+analysis = {type="function", description="Read 9pt method result FITS file & plot Ta"}
+
+[necst.lib.read_hosei]
+_ = {launched=[], requiredBy=[], standalone=false}
+read = {type="function", description="Read pointing parameter file"}
+
+[necst.lib.read_obsfile]
+_ = {launched=[], requiredBy=[], standalone=false}
+read = {type="function", description="Read observation spec file"}
+
+[necst.lib.topic_status]
+_ = {launched=[], requiredBy=[], standalone=false}
+deco = {type="function", description="Publish node status, by executing arbitrary wrapped function", publish=["/status_topic"]}
+
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
