@@ -53,4 +53,53 @@ async function clickHandler(event) {
 }
 
 
-export { dropHandler, dragOverHandler, clickHandler }
+function clickOrDragHandler(event, networkGraph) {
+    event.preventDefault()
+
+    const getPosition = (ev) => ({ x: ev.clientX, y: ev.clientY })
+
+    const target = d3.select(event.target)
+    const data = target.data()
+    let dragged = false
+    let mousedown = true
+    let startPosition = { event: getPosition(event), data: { x: data[0][1].x, y: data[0][1].y } }
+
+    const drag = ev => {
+        ev.preventDefault()
+        if (mousedown) {
+            dragged = true
+            const currentPosition = getPosition(ev)
+            const dx = networkGraph.x.invert(currentPosition.x - startPosition.event.x) - networkGraph.x.invert(0)
+            const dy = networkGraph.y.invert(currentPosition.y - startPosition.event.y) - networkGraph.y.invert(0)
+
+            if (data[0][1].x) {
+                data[0][1].x = startPosition.data.x + dx * 1.3
+                data[0][1].y = startPosition.data.y + dy * 1.3  // XXX: Magic factor 1.3
+            }
+            target.data(data)
+            networkGraph.draw({ animate: false })
+        }
+    }
+    const dragEnd = ev => {
+        ev.preventDefault()
+        if (mousedown && !dragged) { networkGraph.draw({ name: target.data()[0][1].name }) }
+        mousedown = false
+    }
+    target
+        .on("mousemove", drag)
+        .on("mouseleave", dragEnd)
+        .on("mouseup", dragEnd)
+}
+
+// function clickOrDragHandler(event, networkGraph) {
+//     function dragStart(ev, d) { d3.select(this).attr() }
+//     function drag(ev, d) { }
+//     function dragEnd(ev, d) { }  // TODO: Implement <https://observablehq.com/@d3/circle-dragging-i>
+//     return d3.drag()
+//         .on("start", dragStart)
+//         .on("drag", drag)
+//         .on("end", dragEnd)
+// }
+
+
+export { dropHandler, dragOverHandler, clickHandler, clickOrDragHandler }
