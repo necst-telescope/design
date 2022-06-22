@@ -244,21 +244,22 @@ class NetworkDiagram extends NetworkGraph {
         return this[axis](coord)
     }
 
-    draw({ name, animate } = {}) {
+    draw({ name, animate = true } = {}) {
         if (name) { this.focusOn(name) }  // Fix coordinate only when name is provided.
 
         const lines = this.topics.selectAll("line")
-        const texts = this.topics.selectAll("text")
-        animate ? lines.transition() : lines
+        const texts = this.topics.selectAll("text");
+
+        (animate ? lines.transition() : lines)
             .attr("x1", d => this.#getCoord("x", d[1].source))
             .attr("x2", d => this.#getCoord("x", d[1].target))
             .attr("y1", d => this.#getCoord("y", d[1].source))
-            .attr("y2", d => this.#getCoord("y", d[1].target))
-        animate ? texts.transition() : texts
+            .attr("y2", d => this.#getCoord("y", d[1].target));
+        (animate ? texts.transition() : texts)
             .attr("x", d => this.#getCoord("x", d[1].source, d[1].target))
-            .attr("y", d => this.#getCoord("y", d[1].source, d[1].target))
+            .attr("y", d => this.#getCoord("y", d[1].source, d[1].target));
 
-        animate ? this.nodes.transition() : this.nodes
+        (animate ? this.nodes.transition() : this.nodes)
             .attr("transform", d => `translate(${this.#getCoord("x", d[0])}, ${this.#getCoord("y", d[0])})`)
     }
 }
