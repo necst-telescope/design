@@ -1,10 +1,10 @@
 [necst.lib.device.abs_device]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 get_position = {type="function", description="Get HOT position using DIO"}
 move = {type="function", description="HOT motor DIO control"}
 
 [necst.lib.device.antenna_device]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 AntennaDriver = {type="class", description="Antenna servo motor DIO control"}
 "AntennaDriver.command" = {type="method", description="Convert value to binary-command & DIO control"}
 antenna_device = {type="class", description="PID controller"}
@@ -15,7 +15,7 @@ antenna_device = {type="class", description="PID controller"}
 calc_pid = {type="function", description="PID formula"}
 
 [necst.lib.device.antenna_device_reverse]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 antenna_device = {type="class", description="PID control & antenna servo motor DIO control"}
 "antenna_device.init_speed" = {type="method", description="Stop telescope drive via DIO"}
 "antenna_device.move_azel" = {type="method", description="DIO control & return PID-related parameters"}
@@ -23,7 +23,7 @@ antenna_device = {type="class", description="PID control & antenna servo motor D
 calc_pid = {type="function", description="PID formula"}
 
 [necst.lib.device.dome_device]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 dome_device = {type="class", description="Dome DIO control"}
 "dome_device.move_track" = {type="method", description="Call dome_device.move"}
 "dome_device.move" = {type="method", description="Select drive mode & drive via dome_device.do_output"}
@@ -43,12 +43,12 @@ dome_device = {type="class", description="Dome DIO control"}
 "dome_device.print_error" = {type="method", description="Print an error message"}
 
 [necst.lib.device.drive_device]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 move_drive = {type="function", description="DIO ???"}
 move_contactor = {type="function", description="DIO ???"}
 
 [necst.lib.device.m2_device]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 Strobe = {type="function", description="DIO ???"}
 StrobeHOff = {type="function", description="DIO ???"}
 InitIndexFF = {type="function", description="DIO ???"}
@@ -57,18 +57,18 @@ MoveIndexFF = {type="function", description="DIO ???"}
 get_pos = {type="function", description="Get current M2 position and upper/lower limits of position by DIO???"}
 
 [necst.lib.device.m4_device]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 get_pos = {type="function", description="Get if M4 position & driving status by DIO"}
 move = {type="function", description="Move M4 by DIO"}
 counter_reset = {type="function", description="DIO ???"}
 stop = {type="function", description="DIO ???"}
 
 [necst.lib.XFFTS_n2fits_write]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 write = {type="function", description="Write observation data as FITS table"}
 
 [necst.lib.ac240]
-_ = {launched=[], requiredBy=["necst.lib.achilles"], standalone=false}
+_ = {launched=[], require=["necst.lib.dfs_table", "necst.lib.dfs_client"], standalone=false}
 ac240 = {type="class", description="AC240 controller"}
 "ac240.getspectrum" = {type="method", description="Get spectral data by socket communication, NOT RETURN IT"}
 "ac240.getstatus" = {type="method", description="Get status of ??? by socket communication"}
@@ -85,7 +85,7 @@ ac240 = {type="class", description="AC240 controller"}
 cancel = {type="function", description="Send OPERATION_CANCEL command to spectrometer"}
 
 [necst.lib.achilles]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=["necst.lib.achilles"], standalone=false}
 thread = {type="class", description="Wrap methods of threading.Thread"}
 "thread.run" = {type="method", description="Call thread target function & store the return value"}
 "thread.get" = {type="method", description="Get return value of thread target function"}
@@ -96,7 +96,7 @@ dfs = {type="class", description="Wrap 2 necst.lib.ac240.ac240 controllers"}
 "dfs.oneshot" = {type="method", description="Get spectral data with both 2 AC240 boards"}
 
 [necst.lib.azel_calc]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=["necst.lib.coord"], standalone=false, description="import func_calc will FAIL"}
 azel_calc = {type="class", description="Calculate horizontal coordinate from other CoordSys"}
 "azel_calc.dcos_calc" = {type="method", description="Apply cosalt factor"}
 "azel_calc.kisa_calc" = {type="method", description="Apply pointing error correction, via necst.lib.coord.apply_kisa_test"}
@@ -104,47 +104,50 @@ azel_calc = {type="class", description="Calculate horizontal coordinate from oth
 "azel_calc.coordinate_calc" = {type="method", description="Get 10Hz AzEl lists, all same (celestial) position?, converted from other CoordSys"}
 
 [necst.lib.azel_to_radec]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=["necst.lib.kisa_rev"], standalone=false}
 fk5_from_altaz = {type="function", description="Convert coordinate in AzEl to FK5"}
 
 [necst.lib.beam_calc]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 beam_calc = {type="class", description="Calculate beam squint rotation"}
 "beam_calc.calc_model" = {type="method", description="Get offset from given parameters"}
 "beam_calc.calc" = {type="method", description="Get offset using hard-coded parameters"}
 "beam_calc.calc_list" = {type="method", description="Get offset for multiple AzEl, using hard-coded parameters"}
 
 [necst.lib.calc_coord]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=["necst.lib.coord"], standalone=false}
 azel_calc = {type="class", description="Calculate arbitrary # of horizontal coordinates from other CoordSys"}
 "azel_calc.kisa_calc" = {type="method", description="Apply pointing error correction for SkyCoord, via necst.lib.coord.apply_kisa_test"}
 "azel_calc.kisa_calc2" = {type="method", description="Apply pointing error correction for np.array, via necst.lib.coord.apply_kisa_test"}
 "azel_calc.coordinate_calc" = {type="method", description="Get arbitrary # & time of AzEl lists, converted from other CoordSys"}
 
 [necst.lib.calc_offset]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 calc_offset = {type="function", description="Calculate coordinate offset"}
 
 [necst.lib.ccd]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 ccd_controller = {type="class", description="Save metadata & analyse image of optical pointing"}
 "ccd_controller.save_status" = {type="method", description="Save metadata of 'read_status' topic"}
 "ccd_controller.save_track_status" = {type="method", description="Save metadata of 'read_status' topic, identical to ccd_controller.save_status"}
 "ccd_controller.ccd_analysis" = {type="method", description="Find pixel of photographed star from image file"}
 
+[necst.lib.ccd_old]
+_ = {launched=[], require=[], standalone=false, description="Removed"}
+
 [necst.lib.coord]
-_ = {launched=[], requiredBy=["necst.lib.azel_calc", "necst.lib.calc_coord"], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 coord_calc = {type="class", description="Calculate pointing error correction value"}
 "coord_calc.apply_kisa" = {type="method", description="Calculate pointing error dAz, dEl"}
 "coord_calc.apply_kisa_test" = {type="method", description="Calculate pointing error dAz, dEl, using different phase for omega2 & separate [omega, omega2, chi, chi2] for AzEl"}
 "coord_calc.read_kisa_file" = {type="method", description="Read pointing params file"}
 
 [necst.lib.correct_fits]
-_ = {launched=[], requiredBy=[], standalone=true}
-calc = {type="function", description="Fix velocity value recorded assuming old spectrometer???"}
+_ = {launched=[], require=["necst.obs_scripts.ROS_cross_point", "necst.obs_scripts.ROS_otf", "necst.obs_scripts.ROS_otf_tmp"], standalone=true}
+calc = {type="function", description="Fix velocity value which is recorded assuming old spectrometer???"}
 
 [necst.lib.dfs_client]
-_ = {launched=[], requiredBy=["necst.lib.ac240"], standalone=false}
+_ = {launched=[], require=["necst.lib.dfs_table"], standalone=false}
 Client = {type="class", description="???"}
 "Client.print_client_config" = {type="method", description="Print socket connection address"}
 "Client.open" = {type="method", description="Open socket connection"}
@@ -164,10 +167,10 @@ MySQLClient = {type="class", description="Wrap MySQL DB connection, which import
 "MySQLClient.print_table" = {type="method", description="Print pretified SQL table content"}
 
 [necst.lib.dfs_table]
-_ = {launched=[], requiredBy=["necst.lib.ac240", "necst.lib.dfs_client"], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 
 [necst.lib.dome_pos]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 dome_pos_controller = {type="class", description="Get | init dome encoder readings"}
 "dome_pos_controller.dome_enc_initialize" = {type="method", description="Reset & init DIO connection to dome encoder"}
 "dome_pos_controller.print_msg" = {type="method", description="Print a message"}
@@ -180,7 +183,7 @@ dome_pos_monito_client = {type="function", description="Return a dome_pos_contro
 start_dome_pos_server = {type="function", description="Create & start a dome position getter server???"}
 
 [necst.lib.doppler_nanten]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 doppler_nanten = {type="class", description="Calculate 2nd LO freq to track Doppler shift"}
 "doppler_nanten.set_track" = {type="method", description="Get Doppler shift (velocity, frequency) & 2nd LO frequency to track RESTFREQ"}
 "doppler_nanten.t_set_track" = {type="method", description="Print 'aaa=8.03 bbb=13.'"}
@@ -190,58 +193,58 @@ doppler_nanten = {type="class", description="Calculate 2nd LO freq to track Dopp
 "doppler_nanten.nutation" = {type="method", description="Calculate nutation from equatorial coordinate"}
 
 [necst.lib.get_result_pointing]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=[], standalone=true}
 f = {type="function", description="Quadratic polynomial for fitting"}
 gaussian = {type="function", description="Gaussian function for fitting"}
 analyse = {type="function", description="Read 9pt method result FITS file & derive offset, HPBW, AzEl of scan center, etc."}
 
 [necst.lib.get_result_pointing_xffts_edge]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=["necst.lib.n2df"], standalone=true}
 f = {type="function", description="Quadratic polynomial for fitting"}
 gaussian = {type="function", description="Gaussian function for fitting"}
 calc_integdata = {type="function", description="Calibrate & integrate X/Y scan data"}
 analysis = {type="function", description="Read 9pt method result Numpy file & TRY TO derive offset, AzEl of scan center, with inaccurate differentiation."}
 
 [necst.lib.get_result_pointing_xffts_line]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=["necst.lib.n2df"], standalone=true}
 f = {type="function", description="Quadratic polynomial for fitting"}
 gaussian = {type="function", description="Gaussian function for fitting"}
 calc_integdata = {type="function", description="Calibrate & integrate X/Y scan data"}
 analysis = {type="function", description="Read 9pt method result Numpy file & TRY TO derive offset, AzEl of scan center, with inaccurate differentiation."}
 
 [necst.lib.get_xffts_data]
-_ = {launched=[], requiredBy=[], standalone=false}
-get_xffts_data = {type="class", description="Receive 1 topic containing data from 20 XFFTS boards", name="(undefined)", subscribe=["/XFFTS_SPEC"]}
+_ = {launched=[], require=[], standalone=false}
+get_xffts_data = {type="class", description="Receive 1 topic containing data from 20 XFFTS boards", node="(undefined)", subscribe=["/XFFTS_SPEC"]}
 "get_xffts_data.getdata" = {type="method", description="Get received spectral data"}
 "get_xffts_data.get_integdata" = {type="method", description="Get spectral data, integrated for specified (0.1 * n) time duration"}
 
 [necst.lib.hosei_fit]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=["necst.lib.plot", "necst.lib.plot3d"], standalone=false}
 hosei_point = {type="function", description="Fit optical pointing data & plot them, return nothing"}
 
 [necst.lib.hosei_fit_radio]
-_ = {launched=[], requiredBy=[], standalone=true, description="TRY TO do something, return nothing"}
+_ = {launched=[], require=[], standalone=true, description="TRY TO do something, return nothing"}
 
 [necst.lib.kisa_rev]
-_ = {launched=[], requiredBy=["necst.lib.azel_to_radec"], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 apply_kisa_test = {type="function", description="Calculate pointing error dAz, dEl, using different phase for omega2 & separate [omega, omega2, chi, chi2] for AzEl"}
 read_kisa_file = {type="function", description="Read pointing params file"}
 
 [necst.lib.log_weather]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 Weather_log = {type="class", description="Log weather data to CSV file"}
 "Weather_log.initialize" = {type="method", description="Write CSV header"}
 "Weather_log.write" = {type="method", description="Write weather data to CSV file"}
 "Weather_log.read" = {type="method", description="Read the CSV file"}
 
 [necst.lib.logger]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 logger = {type="class", description="Console logger"}
 "logger.setup_logger" = {type="method", description="Configure log format & destination"}
 "logger.obslog" = {type="method", description="Log minimal observation data to file"}
 
 [necst.lib.n2df]
-_ = {launched=[], requiredBy=["necst.lib.get_result_pointing_xffts_edge", "necst.lib.get_result_pointing_xffts_line", "necst.lib.pointing_edge_xffts", "necst.lib.pointing_line_xffts"], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 File = {type="class", description="File handler specialized in handling 16IF spectrometer data"}
 "File.write" = {type="method", description="Write data to file"}
 "File.open" = {type="method", description="Open file"}
@@ -257,11 +260,11 @@ Read = {type="class", description="Read data from file"}
 "Read.read_all" = {type="method", description="Read all data"}
 
 [necst.lib.n2fits_write]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 write = {type="function", description="Write observation data as FITS table"}
 
 [necst.lib.opt_analy]
-_ = {launched=[], requiredBy=["necst.lib.plot"], standalone=true}
+_ = {launched=[], require=[], standalone=true}
 process2forfit = {type="function", description="Format process.log data & save to for_fit.log"}
 process_static = {type="function", description="Calculate statistics [mean, std, median] of process.log data"}
 opt_plot = {type="function", description="Plot Az-dx, El-dy, Az-dy, El-dx"}
@@ -270,80 +273,266 @@ fdy = {type="function", description="Fitting function, major terms of pointing m
 opt_fit = {type="function", description="Fit [dAz, de, chi_x, omega_x, eps, chi_y, omega_y, g1, dEl], WHILE g1 is multiplied with El, not cos(El)"}
 
 [necst.lib.plot]
-_ = {launched=[], requiredBy=["necst.lib.hosei_fit"], standalone=false}
+_ = {launched=[], require=["necst.lib.opt_analy"], standalone=false}
 plot = {type="function", description="Plot Az-dx, El-dy, Az-dy, El-dx"}
 
 [necst.lib.plot_3d]
-_ = {launched=[], requiredBy=["necst.lib.hosei_fit"], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 plot = {type="function", description="Plot dx, dy on AzEl plane"}
 
 [necst.lib.pointing_edge_xffts]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=["necst.lib.n2df"], standalone=true}
 gaussian = {type="function", description="Gaussian function for fitting"}
 calc_integdata = {type="function", description="Calibrate & integrate X/Y scan data"}
 analysis = {type="function", description="Read edge observation Numpy file & plot Ta, dTa/dx|y, with inaccurate differentiation"}
 
 [necst.lib.pointing_line]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=[], standalone=true}
 f = {type="function", description="Quadratic polynomial for fitting"}
 gaussian = {type="function", description="Gaussian function for fitting"}
 analysis = {type="function", description="Read 9pt method result FITS file & plot Ta"}
 
 [necst.lib.pointing_line_xffts]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=["necst.lib.n2df"], standalone=true}
 f = {type="function", description="Quadratic polynomial for fitting"}
 gaussian = {type="function", description="Gaussian function for fitting"}
 calc_integdata = {type="function", description="Calibrate & integrate X/Y scan data"}
 analysis = {type="function", description="Read ??? result Numpy file & plot Ta???"}
 
 [necst.lib.pointing_moon_edge]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=[], standalone=true}
 gaussian = {type="function", description="Gaussian function for fitting"}
 analysis = {type="function", description="Read edge observation result FITS file & plot Ta, dTa/dx|y, with inaccurate differentiation"}
 
 [necst.lib.pointing_planet]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=[], standalone=true}
 gaussian = {type="function", description="Gaussian function for fitting"}
 analysis = {type="function", description="Read 9pt method result FITS file & plot Ta"}
 
 [necst.lib.read_hosei]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 read = {type="function", description="Read pointing parameter file"}
 
 [necst.lib.read_obsfile]
-_ = {launched=[], requiredBy=[], standalone=false}
+_ = {launched=[], require=[], standalone=false}
 read = {type="function", description="Read observation spec file"}
 
 [necst.lib.topic_status]
-_ = {launched=[], requiredBy=[], standalone=false}
-deco = {type="function", description="Publish node status, by executing arbitrary wrapped function", name="(any)", publish=["/status_topic"]}
+_ = {launched=[], require=[], standalone=false, node="(any)", publish=["/status_topic"]}
+deco = {type="function", description="Publish node status, by executing arbitrary wrapped function"}
 
 [necst.logger.scripts.ROS_save_hosei_to_db]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=[], standalone=true, node="/ROS_save_hosei_to_db", subscribe=["/hosei_publish"]}
 save_to_DB = {type="function", description="Make a table on N2Lite to save pointing error parameters"}
-save = {type="function", description="Save pointing error parameters to N2Lite", name="/ROS_save_hosei_to_db", subscribe=["/hosei_publish"]}
+save = {type="function", description="Save pointing error parameters to N2Lite"}
 
 [necst.logger.scripts.ROS_save_log_db]
-_ = {launched=[], requiredBy=[], standalone=true}
+_ = {launched=[], require=[], standalone=true, node="/save_log_db", subscribe=["/logging_ctrl", "/obs_status"]}
 save = {type="function", description="Save log data to N2Lite"}
-save_obs_status = {type="function", description="Save observation status to N2Lite", name="/save_log_db", subscribe=["/logging_ctrl", "/obs_status"]}
+save_obs_status = {type="function", description="Save observation status to N2Lite"}
 
 [necst.logger.scripts.ROS_save_weather_db]
-_ = {launched=[], requiredBy=[], standalone=true}
-log_weather = {type="class", description="Save weather data to N2Lite", name="/weather_log", subscribe=["/status_weather"]}
+_ = {launched=[], require=[], standalone=true, node="/weather_log", subscribe=["/status_weather"]}
+log_weather = {type="class", description="Save weather data to N2Lite"}
 "log_weather.logging" = {type="method", description="Write weather data to N2Lite"}
 
 [necst.logger.scripts.obs_log_server]
-_ = {launched=[], requiredBy=[], standalone=true, description="Web server for observation log, binds N2Lite to lab wiki"}
+_ = {launched=[], require=[], standalone=true, description="Web server for observation log, binds N2Lite to lab wiki"}
 
 [necst.logger.scripts.weather_server]
-_ = {launched=[], requiredBy=[], standalone=true, description="Web server for weather log???"}
+_ = {launched=[], require=[], standalone=true, description="Web server for weather log???"}
+
+[necst.obs_scripts.ROS_cross_planet]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.n2fits_write", "necst.lib.pointing_planet"], standalone=true, description="Perform radio line 9pt method targetting planet"}
+
+[necst.obs_scripts.ROS_cross_point]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.n2fits_write", "necst.lib.correct_fits", "necst.lib.pointing_line"], standalone=true, description="Perform radio line 9pt method"}
+
+[necst.obs_scripts.ROS_focus_planet]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.n2fits_write"], standalone=true, description="Perform PSW spectram while changing position of M2, targetting planet"}
+
+[necst.obs_scripts.ROS_opt_cross]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller", "necst.lib.ccd_old", "necst.lib.opt_analy"], standalone=true, description="Perform optical pointing, import ccd_old FAILS"}
+
+[necst.obs_scripts.ROS_otf]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.n2fits_write", "necst.lib.correct_fits"], standalone=true, description="Perform OTF observation"}
+
+[necst.obs_scripts.ROS_otf_planet]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.n2fits_write"], standalone=true, description="Perform OTF observation targetting planet"}
+
+[necst.obs_scripts.ROS_otf_tmp]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.n2fits_write", "necst.lib.correct_fits"], standalone=true, description="Perform OTF observation, with minimum configuration???"}
+
+[necst.obs_scripts.ROS_ps]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.n2fits_write"], standalone=true, description="Perform PSW observation"}
+
+[necst.obs_scripts.ROS_ps_edge]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.n2fits_write", "necst.lib.pointing_moon_edge"], standalone=true, description="Perform PSW edge pointing observation"}
+
+[necst.obs_scripts.ROS_ps_planet]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.n2fits_write", "necst.lib.pointing_planet"], standalone=true, description="Perform PSW observation targetting planet"}
+
+[necst.obs_scripts.ROS_queue]
+_ = {launched=[], require=[], standalone=true, description="Manage observation queue, using Firebase", node="/queue_obs", subscribe=["/queue_obs", "/obs_stop"], publish=["/next_obs"]}
+queue_check = {type="function", description="Check queued observation???"}
+
+[necst.obs_scripts.ROS_queue2]
+_ = {launched=[], require=[], standalone=true, description="Manage observation queue, using Firebase", node="/queue_observation", subscribe=["/queue_obs", "/obs_stop"], publish=["/next_obs"]}
+obs_stop = {type="function", description="Terminate pipe connection to stop observation"}
+initialize = {type="function", description="Initialize ROS node"}
+read_conf = {type="function", description="Read configuration file???"}
+create_list = {type="function", description="Create observation list from Firebase server???"}
+write_log = {type="function", description="Write log data to Firebase server"}
+select_target = {type="function", description="???"}
+observation = {type="function", description="Run observation"}
+
+[necst.obs_scripts.S_all_sky_shot]
+_ = {launched=[], require=["necst.obs_scripts.S_opt_point"], standalone=true, description="Mock all-sky shot observation, just running S_opt_point start_observation"}
+
+[necst.obs_scripts.S_oneshot]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller", "necst.lib.ccd_old"], standalone=true, description="Mock one-shot observation, import ccd_old FAILS"}
+
+[necst.obs_scripts.S_opt_point]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller", "necst.lib.ccd_old", "necst.lib.calc_coord"], standalone=true, description="Mock optical pointing"}
+
+[necst.obs_scripts._observation]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Base class for observation programs"}
+
+[necst.obs_scripts.all_sky_shot]
+_ = {launched=[], require=["necst.obs_scripts.opt_point"], standalone=true, description="Perform all-sky optical pointing observation, just running opt_point start_observation"}
+
+[necst.obs_scripts.create_queue]
+_ = {launched=[], require=[], standalone=false}
+initialize = {type="function", description="Authenticate Firebase app"}
+read_conf = {type="function", description="Read Firebase configuration file, including secrets"}
+calc_obstime = {type="function", description="Derive best time to run observation???"}
+insert = {type="function", description="Insert observation to Firebase server"}
+
+[necst.obs_scripts.cross_planet_xffts]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller"], standalone=true, description="Perform radio line 9pt method targetting planet"}
+
+[necst.obs_scripts.cross_point_xffts]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.lib.log_weather", "necst.lib.logger", "necst.scripts.controller.ROS_controller"], standalone=true, description="Perform radio line 9pt method"}
+
+[necst.obs_scripts.cross_point_xffts2]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.lib.log_weather", "necst.lib.logger", "necst.scripts.controller.ROS_controller"], standalone=true, description="Perform radio line 9pt method"}
+
+[necst.obs_scripts.edge_point_xffts_ac]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", "necst.lib.pointing_edge_xffts"], standalone=true, description="Perform PSW edge observation"}
+
+[necst.obs_scripts.finalize]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Finalize telescope drive"}
+
+[necst.obs_scripts.focus_object_xffts]
+_ = {launched=[], require=["necst.lib.logger", "necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller"], standalone=true, description="Perform PSW observation changing position of M2 for focusing"}
+
+[necst.obs_scripts.focus_planet_xffts]
+_ = {launched=[], require=["necst.lib.logger", "necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller"], standalone=true, description="Perform PSW observation changing position of M2 for focusing, targetting planet"}
+
+[necst.obs_scripts.gspread_ROS_queue]
+_ = {launched=[], require=[], standalone=true, description="Manage observation queue, using Google Spreadsheet", node="/queue_obs", subscribe=["/queue_obs"], publish=["/next_obs"]}
+queue_check = {type="function", description="Check queued observation???"}
+
+[necst.obs_scripts.initialize]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Initialize telescope drive"}
+
+[necst.obs_scripts.monitor_dfs_power]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Monitor spectrometer power???"}
+
+[necst.obs_scripts.moon_point]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller", "necst.lib.ccd"], standalone=true, description="Perform one-shot observation targetting planet or arbitrary star"}
+
+[necst.obs_scripts.onepoint_track]
+_ = {launched=[], require=["necst.lib.ccd_old", "necst.lib.coord", "necst.scripts.controller.ROS_controller", "necst.lib.calc_coord"], standalone=true, description="Perform optical one-point observation targetting arbitrary point"}
+
+[necst.obs_scripts.oneshot]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Perform one-shot observation, targetting bright star"}
+
+[necst.obs_scripts.oneshot_ch]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Perform radio one-shot observation, without driving to anywhere"}
+
+[necst.obs_scripts.opt_point]
+_ = {launched=[], require=["necst.lib.opt_analy", "necst.scripts.controller.ROS_controller", "necst.lib.ccd", "necst.lib.calc_coord", "necst.lib.hosei_fit", "necst.lib.logger"], standalone=false}
+opt_point_controller = {type="class", description="Controller for optical pointing observation"}
+"opt_point.create_table" = {type="method", description="Create sorted table of observation targets"}
+"opt_point.start_observation" = {type="method", description="Run the observation"}
+
+[necst.obs_scripts.otf]
+_ = {launched=[], require=["necst.obs_scripts._observation"], standalone=true}
+OnTheFly = {type="class", description="Define OnTheFly observation"}
+"OnTheFly.ScanParameters" = {type="method", description="Parse parameters for the observation"}
+"OnTheFly.Scan_direction" = {type="method", description="Directional spacing between each sampling"}
+"OnTheFly.run_onepoint" = {type="method", description="Drive to specified point"}
+"OnTheFly.get_spectrum" = {type="method", description="Make spectrometer data published"}
+"OnTheFly.RampStart" = {type="method", description="Calculate coordinate of start point of approach run"}
+"OnTheFly.ScanStart" = {type="method", description="Time and coordinate of scan start & end time of a scan"}
+"OnTheFly.mjd" = {type="method", description="Calculate MJD from date and time"}
+"OnTheFly.run_ramp" = {type="method", description="Drive to start point of approach run"}
+"OnTheFly.run_otf" = {type="method", description="Run a scan"}
+"OnTheFly.run" = {type="method", description="Run a observation"}
+
+[necst.obs_scripts.otf_horizontal_xffts]
+_ = {launched=[], require=["nesct.lib.logger", "necst.lib.read_obsfile", "necst.scripts.controller.ROS_controller", "necst.lib.doppler_nanten"], standalone=true, description="Perform OTF observation"}
+
+[necst.obs_scripts.otf_planet_xffts]
+_ = {launched=[], require=["necst.lib.doppler_nanten", "necst.scripts.controller.ROS_controller", ], standalone=true, description="Perform OTF observation"}
+
+[necst.obs_scripts.otf_xffts3]
+_ = {launched=[], require=["necst.lib.log_weather", "necst.lib.logger", "necst.lib.read_obsfile", "necst.scripts.controller.ROS_controller", "necst.lib.doppler_nanten"], standalone=true, description="Perform OTF observation"}
+
+[necst.obs_scripts.otf_xffts4]
+_ = {launched=[], require=["necst.lib.log_weather", "necst.lib.logger", "necst.lib.read_obsfile", "necst.scripts.controller.ROS_controller", "necst.lib.doppler_nanten"], standalone=true, description="Perform OTF observation"}
+
+[necst.obs_scripts.ps_xffts]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller", "necst.lib.doppler_nanten", "necst.lib.logger", "necst.lib.read_obsfile", "necst.lib.log_weather"], standalone=true, description="Perform PSW observation"}
+
+[necst.obs_scripts.radio_pointing]
+_ = {launched=[], require=["necst.obs_scripts._observation"], standalone=true}
+RadioPointing = {type="class", description="Define radio pointing observation"}
+"RadioPointing.grid_offset" = {type="method", description="Calculate points to observe"}
+"RadioPointing.wait_for_chopper_move" = {type="method", description="Wait for chopper to complete position change"}
+"RadioPointing.check_interval" = {type="method", description="Check if last calib observation is done within spcified time duration"}
+"RadioPointing.get_spectra" = {type="method", description="Make spectral data to be published"}
+"RadioPointing.drive_and_wait" = {type="method", description="Drive to specified point and wait for the antenna become stable"}
+"RadioPointing.run_calibration" = {type="method", description="Run a calib observation [hot, off]"}
+"RadioPointing.run" = {type="method", description="Run a observation"}
+
+[necst.obs_scripts.realtime_spectrum_viewer]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Plot spectral data realtime"}
+
+[necst.obs_scripts.rsky]
+_ = {launched=[], require=["necst.obs_scripts._observation"], standalone=true}
+RSky = {type="class", description="Define RSky observation"}
+"RSky.run" = {type="method", description="Run a observation"}
+
+[necst.obs_scripts.rsky_by_spectrometer]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Perform RSky observation"}
+
+[necst.obs_scripts.rsky_xffts]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Perform RSky observation"}
+
+[necst.obs_scripts.search_star]
+_ = {launched=[], require=[], standalone=true, description="List stars which are up (20deg<El<80deg) from list of bright stars"}
+
+[necst.obs_scripts.simple_ps]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="R, SKY, ON, OFF, all one-point"}
+
+[necst.obs_scripts.simple_ps_sun]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="R, SKY, SUN, OFF, all one-point"}
+
+[necst.obs_scripts.skydip]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Perform Skydip observation & show result"}
+
+[necst.obs_scripts.skydip_xffts]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller", "necst.lib.logger"], standalone=true, description="Perform Skydip observation"}
 
 ################################################################################
 
 
 
 
+[necst.scripts.controller.ROS_controller]
+_ = {launched=[], require=[], standalone=false}
 
 
 
