@@ -526,6 +526,18 @@ _ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalon
 [necst.obs_scripts.skydip_xffts]
 _ = {launched=[], require=["necst.scripts.controller.ROS_controller", "necst.lib.logger"], standalone=true, description="Perform Skydip observation"}
 
+[necst.rx_scripts.allan]
+_ = {launched=[], require=["/home/amigos/rx.lib.base_param.IF", "necst.scripts.controller.ROS_controller"], standalone=true, description="Plot Allan variance, existence of /home/amigos/rx not sure"}
+
+[necst.rx_scripts.hot_monitor]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, description="Plot result of hot observation output deviation"}
+
+[necst.rx_scripts.linearity]
+_ = {launched=[], require=["/home/amigos/rx.lib.base_param.IF", "necst.scripts.controller.ROS_controller"], standalone=true, description="Plot result of linearity measurement, existence of /home/amigos/rx not sure"}
+
+[necst.rx_scripts.linearity_new]
+_ = {launched=[], require=["/home/amigos/rx.lib.base_param.IF", "necst.scripts.controller.ROS_controller"], standalone=true, description="Plot result of linearity measurement, existence of /home/amigos/rx not sure"}
+
 ################################################################################
 
 
@@ -535,7 +547,8 @@ _ = {launched=[], require=["necst.scripts.controller.ROS_controller", "necst.lib
 _ = {launched=[], require=[], standalone=false}
 
 
-
+["keisukesakasai/NASCORX_System-master.NASCORX_System".base.IF]
+_ = {launched=[], require=[], standalone=false, description="???"}
 
 
 
