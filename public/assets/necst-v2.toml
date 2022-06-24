@@ -192,6 +192,9 @@ doppler_nanten = {type="class", description="Calculate 2nd LO freq to track Dopp
 "doppler_nanten.calc_vobs" = {type="method", description="Calculate Vobs from FK5 coordinate"}
 "doppler_nanten.nutation" = {type="method", description="Calculate nutation from equatorial coordinate"}
 
+[necst.lib.enc]
+_ = {launched=[], require=[], standalone=false,description="Text file, removed"}
+
 [necst.lib.get_result_pointing]
 _ = {launched=[], require=[], standalone=true}
 f = {type="function", description="Quadratic polynomial for fitting"}
@@ -318,8 +321,8 @@ _ = {launched=[], require=[], standalone=false}
 read = {type="function", description="Read observation spec file"}
 
 [necst.lib.topic_status]
-_ = {launched=[], require=[], standalone=false, node="(any)", publish=["/status_topic"]}
-deco = {type="function", description="Publish node status, by executing arbitrary wrapped function"}
+_ = {launched=[], require=[], standalone=false}
+deco = {type="function", description="When a function is called, publish 'start', if it's failed, publish error msg, execution is finished, publish 'end' to topic '/status_topic'"}
 
 [necst.logger.scripts.ROS_save_hosei_to_db]
 _ = {launched=[], require=[], standalone=true, node="/ROS_save_hosei_to_db", subscribe=["/hosei_publish"]}
@@ -538,19 +541,439 @@ _ = {launched=[], require=["/home/amigos/rx.lib.base_param.IF", "necst.scripts.c
 [necst.rx_scripts.linearity_new]
 _ = {launched=[], require=["/home/amigos/rx.lib.base_param.IF", "necst.scripts.controller.ROS_controller"], standalone=true, description="Plot result of linearity measurement, existence of /home/amigos/rx not sure"}
 
-################################################################################
-
-
-
+[necst.scripts.controller.ROS_authority_check]
+_ = {launched=[], require=["necst.lib.topic_status"], standalone=true, node="/authority_check", publish=["/authority_check", "/status_topic"], subscribe=["/authority_regist"]}
+authority = {type="class", description="Check priority of telescope control"}
+"authority.registration" = {type="method", description="Check priority of telescope control"}
+"authority.authority_check" = {type="method", description="Check priority of telescope control"}
 
 [necst.scripts.controller.ROS_controller]
+_ = {launched=[], require=["necst.lib.logger", "necst.lib.achilles"], standalone=false}
+controller = {type="class", description="Telescope controller", node="/controller0", publish=["/obs_stop", "/antenna_drive", "/antenna_contactor", "/onepoint_command", "/linear_command", "/planet_command", "/move_stop", "/antenna_otf", "/horizontal_otf", "/planet_otf", "/dome_move", "/dome_move_az", "/m4", "/hot", "/m2", "/achilles", "/authority_regist", "/obs_status", "/one_status", "/queue_obs", "/alert", "/text1", "/auto_analy", "/ac240", "/encoder_origin", "/logging_ctrl", "/XFFTS_DB_flag", "/encoder_DB_flag", "/logger_path", "/center_beam_num", "/oneshot"], subscribe=["/tracking_check", "/dome_tracking_check", "/authority_check", "/obs_stop", "/read_status"], service=["/ac240", "/encoder_origin"]}
+"controller.logger" = {type="method", description="Log funcName, args, kwargs to console on func call"}
+"controller.deco_check" = {type="method", description="Execute a function if the node has priority"}
+"controller.initialize" = {type="method", description="Get controller name, controller[n]"}
+"controller.registration" = {type="method", description="Published registered node name to ROS_authority_check.authority"}
+"controller.get_authority" = {type="method", description="Call controller.registration with node name, wrapped by controller.logger"}
+"controller.release_authority" = {type="method", description="Call controller.registration with empty node name, wrapped by controller.logger"}
+"controller.check_my_node" = {type="method", description="Get node name of currently priority, wrapped by controller.logger"}
+"controller.logging_message" = {type="method", description="Do nothing, but wrapped by controller.logger"}
+"controller.drive" = {type="method", description="Switch on/off telescope drive, wrapped by controller.logger and controller.deco_check"}
+"controller.onepoint_move" = {type="method", description="Move telescope to specified point, wrapped by controller.logger and controller.deco_check"}
+"controller.planet_move" = {type="method", description="Move telescope to specified planet, wrapped by controller.logger BUT NOT by controller.deco_check"}
+"controller.linear_move" = {type="method", description="Move telescope to ???, wrapped by controller.logger and controller.deco_check"}
+"controller.otf_scan" = {type="method", description="Run 1 scan, wrapped by controller.logger and controller.deco_check"}
+"controller.planet_scan" = {type="method", description="Run 1 scan targetting planet, wrapped by controller.logger and controller.deco_check"}
+"controller.horizontal_scan" = {type="method", description="Run 1 scan horizontally???, wrapped by controller.logger and controller.deco_check"}
+"controller.queue_observation" = {type="method", description="Start or stop(is this feasible?) queued observation, wrapped by controller.logger"}
+"controller.antenna_tracking_check" = {type="method", description="Wait for min(2sec, tracking converges), wrapped by controller.logger"}
+"controller.move_stop" = {type="method", description="Publish move stop flag, wrapped by controller.logger BUT NOT by controller.deco_check"}
+"controller.beam_center" = {type="method", description="Publish beam #"}
+"controller.dome" = {type="method", description="Call move, open, close, stop methods, wrapped by controller.logger and controller.deco_check"}
+"controller.dome_move" = {type="method", description="Publish position to move, wrapped by controller.logger and controller.deco_check"}
+"controller.dome_open" = {type="method", description="Publish 'dome_open', wrapped by controller.logger and controller.deco_check"}
+"controller.dome_close" = {type="method", description="Publish 'dome_close', wrapped by controller.logger"}
+"controller.memb" = {type="method", description="Call open or close method, wrapped by controller.logger and controller.deco_check"}
+"controller.memb_open" = {type="method", description="Publish 'memb_open', wrapped by controller.logger and controller.deco_check"}
+"controller.memb_close" = {type="method", description="Publish 'memb_close', wrapped by controller.logger"}
+"controller.dome_stop" = {type="method", description="Publish 'dome_stop', wrapped by controller.logger"}
+"controlelr.dome_track" = {type="method", description="Publish 'dome_tracking', wrapped by controller.logger and controller.deco_check"}
+"controller.dome_track_end" = {type="method", description="Publish 'dome_track_end', wrapped by controller.logger"}
+"controller.dome_tracking_check" = {type="method", description="Wait for tracking catch up, wrapped by controller.logger and controller.deco_check"}
+"controller.move_m4" = {type="method", description="Publish [in, out], wrapped by controller.logger and controller.deco_check"}
+"controller.move_hot" = {type="method", description="Publish [in, out], wrapped by controller.logger and controller.deco_check"}
+"controller.move_m2" = {type="method", description="Publish position (integer) in [um], wrapped by controller.logger and controller.deco_check"}
+"controller.move_chopper" = {type="method", description="Publish [in, out], wrapped by controller.logger and controller.deco_check"}
+"controller.observation" = {type="method", description="Publish flag indicates observing or not, wrapped by controller.logger and controller.deco_check"}
+"controller.oneshot_achilles" = {type="method", description="Get spectral data from AC240 for specified times, NOT wrapped by controller.logger nor controller.deco_check"}
+"controller.old_oneshot" = {type="method", description="Get spectral data from AC240"}
+"controller.spectrometer" = {type="method", description="Publish exposure duration to non-existent publisher, wrapped by controller.logger and controller.deco_check"}
+"controller.oneshot_XFFTS" = {type="method", description="Publish XFFTS spectrometer settings, wrapped by controller.logger BUT NOT by controller.deco_check"}
+"controlelr.ccd_oneshot" = {type="method", description="Publish picture savePath, wrapped by controller.logger BUT NOT by controller.deco_check"}
+"controller.onepoint_status" = {type="method", description="Publish status of the observation, wrapped by controller.logger BUT NOT by controller.deco_check"}
+"controller.obs_status" = {type="method", description="Publish status of the observation, wrapped by controller.logger BUT NOT by controller.deco_check"}
+"controller.read_status" = {type="method", description="Get status of telescope, require priority"}
+"controller.alert" = {type="method", description="Publish alert message, optionally stop the observation"}
+"controller.encoder_origin_setting" = {type="method", description="Set encoder to origin setting mode, wrapped by controller.logger BUT NOT by controller.deco_check"}
+"controller.pub_encdb_flag" = {type="method", description="Publish DB name, wrapped by controller.logger BUT NOT by controller.deco_check"}
+"controller.xffts_publish_flag" = {type="method", description="Publish observation metadata, wrapped by controller.logger BUT NOT by controller.deco_check"}
+"controller.pub_txtfile" = {type="method", description="Publish filePath & savePath"}
+"controller.pub_analyexec" = {type="method", description="Publish dataPath & analysisType to perform"}
+"controller.pub_loggerflag" = {type="method", description="Publish new logger path"}
+
+[necst.scripts.device.ROS_abs]
+_ = {launched=[], require=["necst.lib.device.abs_device", "necst.lib.topic_status"], standalone=true, node="/abs_controller", publish=["/status_hot", "/status_topic"], subscribe=["/hot", "/emergency"]}
+abs_controller = {type="class", description="Chopper controller"}
+"abs_controller.move" = {type="method", description="Move to subscribed position"}
+"abs_controller.pub_status" = {type="method", description="Publish chopper position 10Hz"}
+
+[necst.scripts.device.ROS_antenna_move]
+_ = {launched=[], require=["necst.lib.device.antenna_device", "necst.lib.device.antenna_device_reverse"], standalone=true, node="/antenna_move", publish=["/error", "/status_antenna", "/status_pid"], subscribe=["/list_azel", "/move_stop", "/emergency_stop", "/status_encoder", "/tracking_check"]}
+antenna_move = {type="class", description="Antenna controller"}
+"antenna_move.limit_check" = {type="method", description="Check 2nd limit"}
+"antenna_move.time_check" = {type="method", description="Check chronological order of 2 commands"}
+"antenna_move.comp" = {type="method", description="Get position in az|el list, immediately after the current time"}
+"antenna_move.act_azel" = {type="method", description="Drive az|el motor"}
+"antenna_move.stop_move" = {type="method", description="Stop az|el motor & reset commands"}
+"antenna_move.emergency" = {type="method", description="Emergency stop"}
+"antenna_move.pub_error" = {type="method", description="Publish if command coordinate is within the limit or not"}
+"antenna_move.pub_status" = {type="method", description="Publish PID results"}
+"antenna_move.pub_status_pid" = {type="method", description="Publish PID parameters & partial results"}
+
+[necst.scripts.device.ROS_antenna_move2]
+_ = {launched=[], require=["necst.lib.device.antenna_device", "necst.lib.device.antenna_device_reverse"], standalone=true, node="/antenna_move", publish=["/error", "/status_antenna", "/status_pid"], subscribe=["/list_azel", "/move_stop", "/emergency_stop", "/status_encoder", "/tracking_check"]}
+"antenna_move.limit_check" = {type="method", description="Check 2nd limit"}
+"antenna_move.time_check" = {type="method", description="Check chronological order of 2 commands"}
+"antenna_move.comp" = {type="method", description="Get position in az|el list, immediately after the current time"}
+"antenna_move.act_azel" = {type="method", description="Drive az|el motor"}
+"antenna_move.stop_move" = {type="method", description="Stop az|el motor & reset commands"}
+"antenna_move.emergency" = {type="method", description="Emergency stop"}
+"antenna_move.pub_error" = {type="method", description="Publish if command coordinate is within the limit or not"}
+"antenna_move.pub_status" = {type="method", description="Publish PID results"}
+"antenna_move.pub_status_pid" = {type="method", description="Publish PID parameters & partial results"}
+
+[necst.scripts.device.ROS_azel_list]
+_ = {launched=[], require=["necst.lib.calc_coord", "necst.lib.beam_calc"], standalone=true, node="/azel_list", publish=["/list_azel", "/obs_stop"], subscribe=["/wc_list", "/status_weather", "/move_stop", "/center_beam_num"]}
+azel_list = {type="class", description="Az|El command list"}
+"azel_list.create_azel_list" = {type="method", description="Create 10Hz az|el list"}
+"azel_list.negative_change" = {type="method", description="Unwrap azimuthal angle"}
+
+[necst.scripts.device.ROS_beam_calc]
+_ = {launched=[], require=[], standalone=true, node="/beam_calc", publish=["/center_beam_position"], subscribe=["/status_encoder", "/center_beam_num"]}
+beam_calc = {type="class", description="Beam position calculator"}
+"beam_calc.calc" = {type="method", description="Calculate & publish beam position"}
+
+[necst.scripts.device.ROS_camera]
+_ = {launched=[], require=["necst_ros3.lib.camera"], standalone=true, node="/camera_controller", publish=["/Image"], subscribe=["/oneshot"], description="import of CvBridge can fail, in that case it should be built from source"}
+cam_controller = {type="class", description="Camera controller"}
+"cam_controller.take_picture" = {type="method", description="Take a picture"}
+"cam_controller.pub_image" = {type="method", description="Publish image"}
+"cam_controller.remove_file" = {type="method", description="If #file > 100, remove oldest"}
+
+[necst.scripts.device.ROS_check_antenna_dio]
+_ = {launched=[], require=[], standalone=true, node="/antenna_dio", publish=["/antenna_dio"], subscribe=[]}
+check_dio = {type="function", description="Publish DIO status???"}
+
+[necst.scripts.device.ROS_check_dome_dio]
+_ = {launched=[], require=[], standalone=true, node="/dome_dio", publish=["/dome_dio"], subscribe=[]}
+check_dio = {type="function", description="Publish DIO status???"}
+
+[necst.scripts.device.ROS_check_encoder_dio]
+_ = {launched=[], require=[], standalone=true, node="/encoder_dio", publish=["/encoder_dio", "/encoder_z_dio"], subscribe=[]}
+check_dio = {type="function", description="Publish DIO status???"}
+
+[necst.scripts.device.ROS_check_launch]
+_ = {launched=[], require=[], standalone=true, node="/check_launch", publish=["/check_launch"], subscribe=[]}
+launch_check = {type="function", description="List necobs.launch-ed node names"}
+node_check = {type="function", description="Publish dead node names"}
+
+[necst.scripts.device.ROS_check_node]
+_ = {launched=[], require=[], standalone=true, node="/check_node", publish=["/check_node"], subscribe=["/status_topic"]}
+pub_topic = {type="function", description="Publish node aliveness dict"}
+
+[necst.scripts.device.ROS_dome]
+_ = {launched=[], require=["necst.lib.dome_pos", "necst.lib.device.dome_device", "necst.lib.topic_status"], standalone=true, node="/dome", publish=["/dome_track_flag", "/status_dome", "/status_topic"], subscribe=["/status_encoder", "/dome_move", "/dome_move_az"]}
+dome_controller = {type="class", description="Dome controller"}
+"dome_controller.read_init_domepos" = {type="method", description="Read initial dome position from file"}
+"dome_controller.test" = {type="method", description="???"}
+"dome_controller.move_org" = {type="method", description="Move dome to original position 90deg"}
+"dome_controller.con_move_track" = {type="method", description="Drive in tracking mode"}
+"dome_controller.con_move" = {type="method", description="Drive in specified Az"}
+"dome_controller.get_count" = {type="method", description="Encoder pulse count"}
+"dome_controller.limit_check" = {type="method", description="Check dome drive limit"}
+"dome_controller.dome_limit" = {type="method", description="???"}
+"dome_controller.get_domepos" = {type="method", description="Get current dome position"}
+"dome_controller.status_check" = {type="method", description="Publish door, memb, control status"}
+"dome_controller.dome_OC" = {type="method", description="Process dome open/close commands"}
+"dome_controller.memb_OC" = {type="method", description="Process memb open/close commands"}
+"dome_controller.act_dome" = {type="method", description="Process dome move commands"}
+"dome_controller.stop_dome" = {type="method", description="Process dome stop commands"}
+"dome_controller.pub_status" = {type="method", description="Publish device status"}
+
+[necst.scripts.device.ROS_drive]
+_ = {launched=[], require=["necst.lib.device.drive_device"], standalone=true, node="/drive", publish=[], subscribe=["/antenna_drive", "/antenna_contactor"]}
+drive = {type="class", description="Antenna drive controller"}
+"drive.move" = {type="method", description="Move antenna"}
+
+[necst.scripts.device.ROS_encoder]
+_ = {launched=[], require=[], standalone=true, node="/encoder_status", publish=["/status_encoder"], subscribe=[], service=["/encoder_origin"]}
+enc_controller = {type="class", description="Encoder reader"}
+"enc_controller.initialize" = {type="method", description="Initial setting to board by DIO"}
+"enc_controller.origin_setting" = {type="method", description="Reply to service"}
+"enc_controller.origin_flag_check" = {type="method", description="???"}
+"enc_controller.board_setting" = {type="method", description="Initialize board"}
+"enc_controller.pub_status" = {type="method", description="Publish encoder reading"}
+"enc_controller.get_azel" = {type="method", description="Convert encoder count to AzEl angle"}
+
+[necst.scripts.device.ROS_hosei_parameter]
+_ = {launched=[], require=[], standalone=true, node="/hosei_parameter", publish=["/hosei_parameter"], subscribe=["/wc_list"], description="Read & publish pointing parameters from file"}
+
+[necst.scripts.device.ROS_image]
+_ = {launched=[], require=[], standalone=true, node="/Image_saver", publish=[], subscribe=["Image", "/oneshot"]}
+Image = {type="class", description="Image logger"}
+"Image.Image_save" = {type="method", description="Save image"}
+
+[necst.scripts.device.ROS_m2]
+_ = {launched=[], require=["necst.lib.device.m2_device"], standalone=true, node="/m2_controller", publish=["/status_m2"], subscribe=["/m2", "/emergency"]}
+m2_controller = {type="class", description="M2 controller"}
+"m2_controller.move" = {type="method", description="Change position of M2"}
+"m2_controller.pub_status" = {type="method", description="Publish M2 position 10Hz"}
+
+[necst.scripts.device.ROS_m4]
+_ = {launched=[], require=["necst.lib.device.m4_device"], standalone=true, node="/m4_controller", publish=["/status_m4"], subscribe=["/m4", "/emergency"]}
+m4_controller = {type="class", description="M4 controller"}
+"m4_controller.move" = {type="method", description="Change position of M4"}
+"m4_controller.stop" = {type="method", description="Stop M4 drive"}
+"m4_controller.pub_status" = {type="method", description="Publish M4 position 10Hz"}
+
+[necst.scripts.device.ROS_oneshot_achilles]
+_ = {launched=[], require=[], standalone=true, node="/achilles", publish=["/ac240_get_data"], subscribe=[], service=["/ac240"]}
+oneshot = {type="function", description="Get one-shot data"}
+
+[necst.scripts.device.ROS_opt_parameter]
+_ = {launched=[], require=[], standalone=true, node="/hosei_parameter", publish=["/hosei_parameter"], subscribe=["/wc_list"], description="Read & publish pointing parameters from file"}
+
+[necst.scripts.device.ROS_ping]
+_ = {launched=[], require=[], standalone=true, node="/ping_check", publish=["/status_ping"], subscribe=[], description="Check ping"}
+
+[necst.scripts.device.ROS_press_meter]
+_ = {launched=[], require=["/home/pi/git/ads.ads1256"], standalone=true, node="/press_raspi", publish=["/press_raspi"], subscribe=[], description="Read pressure from raspi, existense of ads1256 unknown"}
+
+[necst.scripts.device.ROS_scan_linear]
+_ = {launched=[], require=["necst.lib.calc_offset", "necst.lib.topic_status"], standalone=true, node="/worldcoordinate_linear", publish=["/wc_list", "/move_stop", "/status_topic"], subscribe=["/linear_command"]}
+worldcoord = {type="class", description="World coordinate calculator"}
+"worldcoord.create_list" = {type="method", description="???"}
+
+[necst.scripts.device.ROS_scan_onepoint]
+_ = {launched=[], require=["necst.lib.calc_offset"], standalone=true, node="/worldcoordinate_onepoint", publish=["/wc_list", "/obs_stop"], subscribe=["/onepoint_command"]}
+worldcoord = {type="class", description="World coordinate calculator"}
+"worldcoord.create_list" = {type="method", description="???"}
+
+[necst.scripts.device.ROS_scan_otf]
+_ = {launched=[], require=["necst.lib.calc_offset"], standalone=true, node="/worldcoordinate_otf", publish=["/wc_list"], subscribe=["/antenna_otf"]}
+worldcoord = {type="class", description="World coordinate calculator"}
+"worldcoord.create_list" = {type="method", description="List of coordinates for OTF scan"}
+
+[necst.scripts.device.ROS_scan_otf_horizontal]
+_ = {launched=[], require=["necst.lib.calc_coord", "necst.lib.calc_offset"], standalone=true, node="/worldcoordinate_otf_planet", publish=["/wc_list", "/obs_stop"], subscribe=["/horizontal_otf", "/status_weather"]}
+worldcoord = {type="class", description="World coordinate calculator"}
+"worldcoord.create_list" = {type="method", description="List of coordinates for OTF scan"}
+
+[necst.scripts.device.ROS_scan_otf_planet]
+_ = {launched=[], require=["necst.lib.calc_offset"], standalone=true, node="/worldcoordinate_otf_planet", publish=["/wc_list", "/obs_stop"], subscribe=["/planet_otf", "/status_weather"]}
+worldcoord = {type="class", description="World coordinate calculator"}
+"worldcoord.create_list" = {type="method", description="List of coordinates for OTF scan"}
+
+[necst.scripts.device.ROS_scan_planet]
+_ = {launched=[], require=["necst.lib.calc_offset"], standalone=true, node="/worldcoordinate_planet", publish=["/wc_list", "/obs_stop"], subscribe=["/planet_command", "/status_weather"]}
+worldcoord = {type="class", description="World coordinate calculator"}
+"worldcoord.create_list" = {type="method", description="???"}
+
+[necst.scripts.device.ROS_smartcounter]
+_ = {launched=[], require=["necst.lib.enc"], standalone=true, node="/smartcounter_status", publish=["/status_encoder"], subscribe=[]}
+enc_controller = {type="class", description="Encoder controller"}
+"enc_controller.counter_thread" = {type="method", description="Publish encoder readings"}
+
+[necst.scripts.device.ROS_timer]
+_ = {launched=[], require=["necst.lib.topic_status"], standalone=true, node="/timer", publish=["/timer", "/status_topic"], subscribe=[]}
+time_publish = {type="function", description="Publish LST, UTC, MJD, UNIX"}
+
+[necst.scripts.device.ROS_weather]
+_ = {launched=[], require=["necst.lib.weather"], standalone=true, node="/weather_status", publish=["/web_humi24", "/web_wind24", "/status_weather"], subscribe=["/davis_weather", "/press_raspi", "/ondotori_hum", "/ondotori_temp", "/ondotori_dome_temp1", "/ondotori_dome_temp2"]}
+weather_controller = {type="class", description="Weather meter controller & server"}
+"weather_controller.pub_func" = {type="method", description="Publish weather data"}
+"weather_controller.copy_file" = {type="method", description="Send data via SCP"}
+"weather_controller.get_weather" = {type="method", description="Get weather data???"}
+
+[necst.scripts.device.old_ROS_antenna]
+_ = {launched=[], require=["necst.lib.azel_calc"], standalone=true, node="/antenna_server", publish=["/list_azel", "/obs_stop"], subscribe=["/status_weather", "/move_stop", "/status_encoder", "/assist_antenna", "/assist_otf"]}
+antenna = {type="class", description="Antenna controller"}
+"antenna.azel_publish" = {type="method", description="Publish az/el to /list_azel"}
+"antenna.antenna_move" = {type="method", description="Fill msg with calculated az/el list"}
+"antenna.otf_start" = {type="method", description="Fill msg with calculated az/el list"}
+"antenna.limit_check" = {type="method", description="Check az/el limit"}
+
+[necst.scripts.helper.ROS_alert_encoder]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, node="(undefined)", publish=[], subscribe=["/status_antenna", "/status_encoder", "/stop_alert"]}
+alert = {type="class", description="Send alert while watching encoder reading"}
+"alert.pub_status" = {type="method", description="Stop entire system if emergency, else publish msg via ROS_controller"}
+"alert.check_encoder" = {type="method", description="Check encoder readings"}
+
+[necst.scripts.helper.ROS_alert_ping]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, node="(undefined)", publish=[], subscribe=["/status_ping"]}
+alert = {type="class", description="Send alert while watching ping"}
+"alert.pub_status" = {type="method", description="Stop entire system if emergency, else publish msg via ROS_controller"}
+"alert.check_ping" = {type="method", description="Check ping thresh=10sec"}
+
+[necst.scripts.helper.ROS_alert_sun]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, node="(undefined)", publish=[], subscribe=["/list_azel", "/stop_alert"]}
+alert = {type="class", description="Send alert while watching separation to the sun"}
+"alert.pub_status" = {type="method", description="Stop entire system if emergency, else publish msg via ROS_controller"}
+"alert.check_sun_position" = {type="method", description="Check separation to the sun"}
+
+[necst.scripts.helper.ROS_alert_weather]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, node="(undefined)", publish=[], subscribe=["/status_weather", "/stop_alert"]}
+alert = {type="class", description="Send alert while watching weather"}
+"alert.pub_status" = {type="method", description="Stop entire system if emergency, else publish msg via ROS_controller"}
+"alert.check_weather" = {type="method", description="Check weather (wind speed, humidity, precip.)"}
+
+[necst.scripts.helper.ROS_analy_node]
+_ = {launched=[], require=[], standalone=true, node="/analy", publish=["/analy_status"], subscribe=["/anto_analy"]}
+pub_status = {type="function", description="Publish requested analysis type, 2Hz"}
+
+[necst.scripts.helper.ROS_check_alert]
+_ = {launched=[], require=["necst.scripts.controller.ROS_controller"], standalone=true, node="(undefined)", publish=["/check_alert"], subscribe=[ "/stop_alert"]}
+check_alert_node = {type="function", description="Check if alert nodes are alive"}
+
+[necst.scripts.helper.ROS_dome_track_check]
+_ = {launched=[], require=[], standalone=true, node="/dome_tracking", publish=["/dome_tracking_check"], subscribe=["/status_dome", "/status_encoder"]}
+dome_tracking_check = {type="class", description="Check if dome tracking is ok"}
+"dome_tracking_check.check_dome_track" = {type="method", description="Check if tracking accuracy (domeEnc-antennaEnc) is within 4arcmin"}
+"dome_tracking_check.pub_tracking" = {type="method", description="Publish dome tracking status, 100Hz"}
+
+[necst.scripts.helper.ROS_limit_check]
+_ = {launched=[], require=[], standalone=true, node="/limit_check", publish=["/limit_check", "/limit"], subscribe=[], description="Publish limit status 10Hz & cause of error if any"}
+
+[necst.scripts.helper.ROS_obsmode]
+_ = {launched=[], require=[], standalone=true, node="/obsmode", publish=["/obsmode"], subscribe=["/XFFTS_DB_flag"], description="Publish obsmode, acquired from '/XFFTS_DB_flag', 50Hz"}
+
+[necst.scripts.helper.ROS_pc_status]
+_ = {launched=[], require=[], standalone=true, node="/cpu_memory_check", publish=["/pc_status"], subscribe=[]}
+pc_check = {type="class", description="Check CPU & memory usage"}
+"pc_check.get_status" = {type="method", description="Get CPU & memory usage, 0.1Hz"}
+"pc_check.publish_data" = {type="method", description="Publish CPU & memory usage, 0.5Hz"}
+
+[necst.scripts.helper.ROS_pub_txtfile]
+_ = {launched=[], require=[], standalone=true, node="/text_publisher", publish=["/text2"], subscribe=["/text1"], description="Publish content of text file"}
+
+[necst.scripts.helper.ROS_stop]
+_ = {launched=[], require=[], standalone=true, node="/stop", publish=["/emergency"], subscribe=["/emergency_stop", "/interruption", "/limit"]}
+stop = {type="functino", description="Publish emergency or not, 10Hz"}
+
+[necst.scripts.helper.ROS_tracking]
+_ = {launched=[], require=[], standalone=true, node="/tracking", publish=["/tracking_check", "/move_stop"], subscribe=["/status_antenna", "/status_encoder", "/onepoint_command", "/linear_command", "/planet_command"]}
+tracking_check = {type="class", description="Check if tracking is ok"}
+"tracking_check.check_track" = {type="method", description="Check if tracking accuracy (cmd-enc) is within 3arcmin"}
+"tracking_check.pub_tracking" = {type="method", description="Publish tracking status, 100Hz"}
+"tracking_check.pub_movestop" = {type="method", description="Publish move stop status, 2Hz"}
+
+[necst.scripts.record.ROS_ac240_time]
+_ = {launched=[], require=[], standalone=true, node="/record_ac240_time", publish=[], subscribe=["/ac240_get_data"], description="Record AC240 spectral data timestamp to file"}
+
+[necst.scripts.record.ROS_log_pid]
+_ = {launched=[], require=[], standalone=true, node="/log_pid", publish=[], subscribe=["/status_pid"]}
+save_pid = {type="class", description="Save PID params & partial calc results to file"}
+"save_pid.write_file" = {type="method", description="Dump to file"}
+
+[necst.scripts.record.ROS_obs_log]
+_ = {launched=[], require=[], standalone=true, node="/obs_log", publish=[], subscribe=["/obs_status", "/status_weather", "/hosei_parameter", "/obs_stop", "/alert"]}
+obs_format = {type="function", description="Ignore redundant lines in obs_log/**.txt, then dump to log/**.txt"}
+end = {type="function", description="Write reason of terminating observation to file"}
+weather_check = {type="function", description="Dump weather conditions to .txt file in markdown format"}
+observer = {type="function", description="Dump observer's name  to .txt file in markdown format"}
+observation = {type="function", description="Dump observation target & DB name to .txt file in markdown format"}
+initialize = {type="function", description="Dump home contents to .txt file in markdown format"}
+start_program = {type="function", description="Start watching data & write to .txt file in markdown format using above functions"}
+observer_change = {type="function", description="Replace observer's name in .txt file"}
+
+[necst.scripts.record.ROS_save_azel_o]
+_ = {launched=[], require=[], standalone=true, node="/save_azel", publish=[], subscribe=["/status_encoder", "/status_antenna"]}
+save_azel = {type="class", description="Save encoder reading, PID command coord & speed to file"}
+"save_azel.write_file" = {type="method", description="Dump to file"}
+
+[necst.scripts.record.ROS_save_dio]
+_ = {launched=[], require=[], standalone=true, node="/save_dio", publish=[], subscribe=["(arbitrary)"]}
+check_file = {type="function", description="Check if file exists"}
+save_file = {type="function", description="Save ??? to file"}
+
+[necst.scripts.record.ROS_save_logger]
+_ = {launched=[], require=[], standalone=true, node="/NECST_logger", publish=[], subscribe=["/rosout_agg"]}
+save_file_conf = {type="function", description="Get path to save"}
+save = {type="function", description="Save console logging to file"}
+
+[necst.scripts.record.ROS_save_wclist]
+_ = {launched=[], require=[], standalone=true, node="/save_wclist", publish=[], subscribe=["/wc_list", "/logger_path"]}
+save_wclist = {type="class", description="Save wc_list to file", description="Save wc_list & DB path to file"}
+
+[necst.scripts.record.ROS_status]
+_ = {launched=[], require=[], standalone=true, node="/Status", publish=[], subscribe=["/status_antenna", "/status_weather", "/status_encoder", "/status_dome", "/status_hot", "/status_drive", "/status_m4", "/limit_check", "/status_m2", "/alert", "/tracking_check", "/check_launch"]}
+status_main = {type="class", description="Status server of NECST"}
+"status_main.status_check" = {type="method", description="Sleep for 0.1sec"}
+"status_main.tel_status" = {type="method", description="Publish status 20Hz, log to console, dump to file"}
+read_status = {type="class", description="Get status from topics"}
+"read_status.initialize" = {type="method", description="Configure subscribers"}
+"read_status.read_status" = {type="method", description="Get subscribed status"}
+
+[necst.scripts.record.ROS_sub_txtfile]
+_ = {launched=[], require=[], standalone=true, node="/savetxt", publish=[], subscribe=["/text2"], description="Subscribe content of text file & save it"}
+
+[necst.scripts.record.ROS_weather_status]
+_ = {launched=[], require=[], standalone=true, node="/weather_log", publish=[], subscribe=["/status_weather"]}
+log_weather = {type="class", description="Log weather status to file"}
+"log_weather.logging" = {type="method", description="Format & dump to file"}
+
+[necst.scripts.record.analy_tmp]
+_ = {launched=[], require=["necst.lib.azel_to_radec"], standalone=true, description="Read N2Lite, ???"}
+
+[necst.scripts.record.azel_download]
+_ = {launched=[], require=[], standalone=true, description="Load N2db data"}
+
+[necst.scripts.record.azel_upload]
+_ = {launched=[], require=[], standalone=true, node="/upload_azel_to_spreadsheet", publish=[], subscribe=["/status_encoder"]}
+encoder_up = {type="class", description="Upload encoder readings to N2db"}
+"encoder_up.list_up" = {type="method", description="Upload encoder readings to N2db"}
+
+[necst.scripts.record.cloud_up]
+_ = {launched=[], require=[], standalone=true, node="/cloud_AzEl", publish=[], subscribe=["/status_encoder"]}
+record_cloud = {type="class", description="Upload encoder readings to cloud"}
+"record_cloud.list_count" = {type="method", description="Check if len(inputList)>30 or not"}
+"record_cloud.stop" = {type="method", description="???"}
+"record_cloud.record" = {type="method", description="Upload encoder reading (AzEl list) to DB"}
+upload_cloud = {type="class", description="Upload encoder readings to cloud"}
+"upload_cloud.set_nodename" = {type="method", description="Setter of instance variable node_name"}
+"upload_cloud.set_pjt_table" = {type="method", description="Setter of instance variable pjt(project name) & table name"}
+
+[necst.scripts.record.read_xffts_data]
+_ = {launched=[], require=[], standalone=true}
+dis_sirialize = {type="function", description="Load list of serialized pickle data"}
+read = {type="function", description="Read spectral data from N2Lite"}
+read2 = {type="function", description="Read spectral data from N2Lite"}
+
+[necst.scripts.record.save_antenna_status]
+_ = {launched=[], require=[], standalone=true, node="/sas", publish=[], subscribe=["/status_encoder", "/encoder_DB_flag"]}
+telescope_logger = {type="class", description="Log telescope status to file"}
+"telescope_logger.main" = {type="method", description="Wait for new DB to come"}
+"telescope_logger.config" = {type="method", description="Configure new N2Lite DB"}
+"telescope_logger.save_to_db" = {type="method", description="Log telescope status to N2Lite"}
+
+[necst.scripts.record.save_weatherlog]
+_ = {launched=[], require=[], standalone=true, node="/weather_logger", publish=[], subscribe=["/status_weather", "/XFFTS_DB_flag"]}
+weather_logger = {type="class", description="Log weather status to file"}
+"weather_logger.initialize" = {type="method", description="Write CSV header"}
+"weather_logger.write" = {type="method", description="Write weather status to CSV file"}
+
+[necst.scripts.record.save_xffts_data_n2f]
+_ = {launched=[], require=["necst.lib.n2df"], standalone=true, node="/xffts_logger", publish=["/xffts_logger_status"], subscribe=["/XFFTS_SPEC", "XFFTS_DB_flag"]}
+xffts_logger = {type="class", description="Log XFFTS data to file"}
+"xffts_logger.save_data" = {type="method", description="Write data to npy file"}
+"xffts_logger.pub_status" = {type="method", description="Publish path & size of file 2Hz"}
+
+[necst.scripts.record.tk_save_antenna_log]
+_ = {launched=[], require=[], standalone=true, node="/log_test", publish=[], subscribe=["/status_encoder", "/status_antenna"]}
+save_status = {type="function", description="Save [cmd, enc, speed] to file"}
+
+[necst.scripts.record.upload]
 _ = {launched=[], require=[], standalone=false}
+upload = {type="class", description="Upload data to cloud (spread sheet)"}
+"upload.set_project_name" = {type="method", description="Setter of instance variable project_name"}
+"upload.set_table_name" = {type="method", description="Setter of instance variable table_name"}
+"upload.list_count" = {type="method", description="Check if len(inputList)>30 or not"}
+"upload.record" = {type="method", description="Upload to cloud"}
 
+################################################################################
 
-["keisukesakasai/NASCORX_System-master.NASCORX_System".base.IF]
-_ = {launched=[], require=[], standalone=false, description="???"}
+[necst_ros3.lib.camera]
 
-
-
+[nasco_system.scripts.nasco_controller]
 
 
