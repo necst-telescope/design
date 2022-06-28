@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NECST v4 design</title>
+</head>
+
+<body>
+    <div id="root" class="markdown-body"></div>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.14/lib/marked.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.6/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@3.0.1/github-markdown.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/base16/solarized-light.min.css"
+        class="dm-code-light-theme">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/highlight.min.js"></script>
+
+    <script type="module">
+        marked.setOptions({
+            highlight: (code, lang) => {
+                const language = hljs.getLanguage(lang) ? lang : "plaintext"
+                return hljs.highlight(code, { language }).value
+            },
+            langPrefix: "hljs language-",
+            gfm: true,
+            headerIds: true,
+        })
+        const root = document.getElementById("root")
+        const subpackages = ["core", "ctrl"]
+        for (let subpkg of subpackages) {
+            const response = await fetch(`./assets/necst-v4/${subpkg}.md`)
+            const text = await response.text()
+            const parsed = marked.parse(text)
+            const elem = document.createElement("div")
+            elem.innerHTML = DOMPurify.sanitize(parsed)
+            root.appendChild(elem)
+        }
+    </script>
+    <style></style>
+</body>
+
+</html>
