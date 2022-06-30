@@ -31,9 +31,7 @@ async function readTOML(source) {
     const tomlParser = await toml  // Wait for Python module loading completes.
     const parsedData = tomlParser(tomlText)
 
-    console.debug("Parsed TOML contents:", parsedData)
     const networkData = fileStructureToROSNetwork(parsedData)
-    console.debug("Extracted ROS network data", networkData)
     return formatData(networkData)
 }
 

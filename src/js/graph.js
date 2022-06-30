@@ -14,7 +14,6 @@ class NetworkGraph {
     constructor(data) {
         this.data = data
         this.network = this.focusOn()
-        console.debug("Network data:", this.data)
     }
 
     /**
@@ -50,7 +49,6 @@ class NetworkGraph {
             node.x = coord.x.next().value
             node.y = coord.y.next().value
         }
-        // for (let [name, node] of network.nodes) {
         for (let [name, node] of network.nodes) {
             Object.values(nodeGrp).forEach(meta => {
                 if (meta.member.has(node.name)) { assignCoord(meta.coords, node) }
@@ -58,7 +56,6 @@ class NetworkGraph {
         }
 
         this.network = network
-        console.debug("Resolved network:", network)
         return network
     }
 
@@ -69,24 +66,7 @@ class NetworkGraph {
      * @returns {NetworkData} Minimal information of the ROS network.
      */
     #resolveNetwork(names, resolved) {
-        if (names.length === 0) {
-            for (let node of this.data.nodes.values()) {
-                if (!resolved.nodes.has(node.name)) {
-                    resolved.nodes.set(node.name, { name: node.name })
-                }
-            }
-            for (let topic of this.data.topics.values()) {
-                if (!resolved.topics.has(topic.name)) {
-                    const combination = utils.getAllCombinations(topic.from, topic.to)
-                    combination.forEach(({ source, target }, idx) => {
-                        resolved.topics.set(topic.name + "_" + idx, {
-                            name: topic.name, source: source, target: target
-                        })
-                    })
-                }
-            }
-            return resolved
-        }
+        if (names.length === 0) { return resolved }
         if (!resolved) { resolved = { nodes: new Map(), topics: new Map() } }
 
         const needFurtherIntrospection = []
@@ -184,7 +164,7 @@ class NetworkDiagram extends NetworkGraph {
     constructor(data) {
         super(data)
 
-        this.unknown = { x: 60, y: 60 }
+        this.unknown = { x: 52, y: 52 }
 
         // const margin = { top: 15, bottom: 15, left: 15, right: 15 }
         const margin = { top: 0, bottom: 0, left: 0, right: 0 }
@@ -244,12 +224,11 @@ class NetworkDiagram extends NetworkGraph {
             .classed("ros-node-bg", true)
             .attr("width", d => d[1].name.length * 10)
             .attr("height", 20)
-            .attr("transform", "translate(0, -15) rotate(-15)")
+            .attr("transform", "translate(0, -15)")
             .style("fill", "#AFF9")
         nodes.append("text")
             .classed("ros-node-label", true)
             .style("fill", "#00F")
-            .attr("transform", "rotate(-15)")
             .text(d => d[1].name)
 
         this.topics = topics
