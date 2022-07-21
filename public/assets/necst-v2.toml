@@ -893,7 +893,7 @@ save = {type="function", description="Save console logging to file"}
 
 [necst.scripts.record.ROS_save_wclist]
 _ = {launched=[], require=[], standalone=true, node="/save_wclist", publish=[], subscribe=["/wc_list", "/logger_path"]}
-save_wclist = {type="class", description="Save wc_list to file", description="Save wc_list & DB path to file"}
+save_wclist = {type="class", description="Save wc_list to file"}
 
 [necst.scripts.record.ROS_status]
 _ = {launched=[], require=[], standalone=true, node="/Status", publish=[], subscribe=["/status_antenna", "/status_weather", "/status_encoder", "/status_dome", "/status_hot", "/status_drive", "/status_m4", "/limit_check", "/status_m2", "/alert", "/tracking_check", "/check_launch"]}
@@ -970,10 +970,34 @@ upload = {type="class", description="Upload data to cloud (spread sheet)"}
 "upload.list_count" = {type="method", description="Check if len(inputList)>30 or not"}
 "upload.record" = {type="method", description="Upload to cloud"}
 
+[necst_ros3.lib.camera]
+_ = {launched=[], require=[], standalone=false}
+controller = {type="class", description="Camera controller"}
+"controller.detect_camera" = {type="method", description="Detect camera"}
+"controller.query_mode" = {type="method", description="Get camera mode"}
+"controller.set_time" = {type="method", description="Set camera clock"}
+"controller.query_time" = {type="method", description="Get camera clock"}
+"controller.query_battery" = {type="method", description="Get camera battery level"}
+"controller.set_whitebalance" = {type="method", description="Set white balance"}
+"controller.query_whitebalance" = {type="method", description="Get white balance"}
+"controller.shutter" = {type="method", description="Capture photo"}
+"controller.shutter_download" = {type="method", description="Take??? and download photo"}
+"controller.set_crop" = {type="method", description="Set factor for cropping"}
+"controller.query_crop" = {type="method", description="Get factor for cropping"}
+
 ################################################################################
 
-[necst_ros3.lib.camera]
-
 [nasco_system.scripts.nasco_controller]
+_ = {launched=[], require=[], standalone=false}
+controller = {type="class", description="RX system controller", node="/nasco_controller", publish=["/sis_vol_2l_cmd", "/sis_vol_2r_cmd", "/sis_vol_3l_cmd", "/sis_vol_3r_cmd", "/sis_vol_4l_cmd", "/sis_vol_4r_cmd", "/sis_vol_5l_cmd", "/sis_vol_5r_cmd", "/sis_vol_1lu_cmd", "/sis_vol_1ll_cmd", "/sis_vol_1ru_cmd", "/sis_vol_1rl_cmd", "/hemt_2l_vd_cmd", "/hemt_2r_vd_cmd", "/hemt_3l_vd_cmd", "/hemt_3r_vd_cmd", "/hemt_4l_vd_cmd", "/hemt_4r_vd_cmd", "/hemt_5l_vd_cmd", "/hemt_5r_vd_cmd", "/hemt_2l_vg1_cmd", "/hemt_2r_vg1_cmd", "/hemt_3l_vg1_cmd", "/hemt_3r_vg1_cmd", "/hemt_4l_vg1_cmd", "/hemt_4r_vg1_cmd", "/hemt_5l_vg1_cmd", "/hemt_5r_vg1_cmd", "/hemt_2l_vg2_cmd", "/hemt_2r_vg2_cmd", "/hemt_3l_vg2_cmd", "/hemt_3r_vg2_cmd", "/hemt_4l_vg2_cmd", "/hemt_4r_vg2_cmd", "/hemt_5l_vg2_cmd", "/hemt_5r_vg2_cmd", "/loatt_2l_cmd", "/loatt_2r_cmd", "/loatt_3l_cmd", "/loatt_3r_cmd", "/loatt_4l_cmd", "/loatt_4r_cmd", "/loatt_5l_cmd", "/loatt_5r_cmd", "/loatt_1l_cmd", "/loatt_1r_cmd", "/cpz7415v_1_rsw0_do_cmd", "/cpz7415v_1_rsw0_x_step_cmd", "/cpz7415v_1_rsw0_y_step_cmd", "/cpz7415v_1_rsw0_z_step_cmd", "/cpz7415v_1_rsw0_u_step_cmd", "/switch_1X_cmd", "/switch_1Y_cmd", "/switch_2X_cmd", "/switch_2Y_cmd", "/sg_100ghz_1st_freq_cmd", "/sg_100ghz_1st_power_cmd", "/sg_100ghz_1st_onoff_cmd", "/sg_200ghz_1st_freq_cmd", "/sg_200ghz_1st_power_cmd", "/sg_200ghz_1st_onoff_cmd", "/sg_100ghz_2nd_upper_freq_cmd", "/sg_100ghz_2nd_upper_power_cmd", "/sg_100ghz_2nd_upper_onoff_cmd", "/sg_100ghz_2nd_lower_freq_cmd", "/sg_100ghz_2nd_lower_power_cmd", "/sg_100ghz_2nd_lower_onoff_cmd", "/sg_200ghz_2nd_upper_freq_cmd", "/sg_200ghz_2nd_upper_power_cmd", "/sg_200ghz_2nd_upper_onoff_cmd", "/sg_200ghz_2nd_lower_freq_cmd", "/sg_200ghz_2nd_lower_power_cmd", "/sg_200ghz_2nd_lower_onoff_cmd", "/patt_2l_cmd", "/patt_2r_cmd", "/patt_3l_cmd", "/patt_3r_cmd", "/patt_4l_cmd", "/patt_4r_cmd", "/patt_5l_cmd", "/patt_5r_cmd", "/patt_1lu_cmd", "/patt_1ll_cmd", "/patt_1ru_cmd", "/patt_1rl_cmd"], subscribe=[]}
+
+[nasco_system.scripts.relay]
+_ = [
+    {launched=[], require=[], standalone=false, node="", publish=[], subscribe=[]},
+]
+
+
+
+
 
 
