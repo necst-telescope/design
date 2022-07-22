@@ -172,10 +172,10 @@ graph LR
   end
   necctrl -->|ROS UDP| N
   necopt -->|ROS UDP| N
-  C -->|192.168.31.xx| necrec[ ロガー/necrec ]
-  M -->|192.168.32.xx| necrec
   O -->|ROS UDP| necrec
   N -->|ROS UDP| necrec
+  C -->|192.168.31.xx| necrec[ ロガー/necrec ]
+  M -->|192.168.32.xx| necrec
   N -->|ROS UDP| necserver
   J --> O
   K --> O
